@@ -115,6 +115,19 @@ metadata:
 
 - [ ] **E-Mail-Benachrichtigung für Malte** in Netlify: Forms → Form notifications → E-Mail
 
+- [ ] **Google Analytics + GTM einrichten** (geplant, noch nicht umgesetzt)
+  - **Schritt 1:** GTM-Container anlegen (tagmanager.google.com) → Container-ID notieren (GTM-XXXXXXX)
+  - **Schritt 2:** GA4-Property anlegen (analytics.google.com) → Measurement-ID notieren (G-XXXXXXXXXX)
+  - **Schritt 3:** Cookie-Banner vollständig umbauen – aktuell nur „Verstanden", muss werden:
+    - Kategorie „Notwendige Cookies" (immer aktiv)
+    - Kategorie „Statistik" (Google Analytics) – Opt-In
+    - Kategorie „Marketing" (GTM) – Opt-In
+    - Buttons: „Alle akzeptieren" / „Auswahl speichern" / „Ablehnen"
+  - **Schritt 4:** GTM/GA nur laden wenn Consent gegeben → via `dataLayer.push` Consent-Signal
+  - **Schritt 5:** Datenschutzerklärung um GA/GTM-Abschnitt ergänzen
+  - **Wichtig:** Ohne Opt-In darf GA/GTM nicht feuern (DSGVO – kein Opt-Out, sondern Opt-In!)
+  - **Aktueller Banner-Text** muss von „keine Tracking-Cookies" auf echtes Consent-Management geändert werden
+
 ### Priorität Mittel
 - [ ] **Spanische Version** (`/es/`) – Mallorca-Markt (Palmenzünsler)
   - `es/index.html` – Fokus Palmenzünsler
