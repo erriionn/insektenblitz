@@ -1162,9 +1162,16 @@
             </div>
             <input type="hidden" id="fBefall" />
             <p id="fErr3" style="color:#d9534f;font-size:13px;margin-bottom:12px;display:none;">Bitte eine Option auswählen.</p>
+
+            <label style="display:flex;align-items:flex-start;gap:12px;padding:16px;background:#f0faf4;border:1px solid #d4e8da;border-radius:8px;cursor:pointer;margin-bottom:12px;">
+              <input type="checkbox" id="fDatenschutz" style="margin-top:3px;width:18px;height:18px;accent-color:#1d5a3d;flex-shrink:0;cursor:pointer;" />
+              <span style="font-size:13px;color:#1a2423;line-height:1.6;">Ich habe die <a href="datenschutz.html" target="_blank" style="color:#1d5a3d;font-weight:600;text-decoration:underline;">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Daten zur Bearbeitung meiner Anfrage zu. *</span>
+            </label>
+            <p id="fErr3b" style="color:#d9534f;font-size:13px;margin-bottom:12px;display:none;">Bitte stimmen Sie der Datenschutzerklärung zu.</p>
+
             <div style="display:flex;gap:12px;">
               <button onclick="fGoTo(2)" style="padding:15px 24px;background:white;color:var(--text-dark);border:2px solid var(--border);border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--sans);">← Zurück</button>
-              <button onclick="fGoTo(4)" style="flex:1;padding:15px;background:var(--primary-green);color:white;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:background 0.2s;" onmouseover="this.style.background='#3fb566'" onmouseout="this.style.background='#1d5a3d'">Weiter →</button>
+              <button onclick="fGoTo(4)" style="flex:1;padding:15px;background:var(--primary-green);color:white;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:background 0.2s;" onmouseover="this.style.background='#3fb566'" onmouseout="this.style.background='#1d5a3d'">Anfrage absenden →</button>
             </div>
           </div>
         </div>
@@ -1229,6 +1236,10 @@
             document.getElementById('fErr3').style.display = 'block'; return;
           }
           document.getElementById('fErr3').style.display = 'none';
+          if (!document.getElementById('fDatenschutz').checked) {
+            document.getElementById('fErr3b').style.display = 'block'; return;
+          }
+          document.getElementById('fErr3b').style.display = 'none';
           fData.befall = document.getElementById('fBefall').value;
           fetch('/', {
             method: 'POST',
