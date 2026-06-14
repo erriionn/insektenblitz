@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Datenschutzerklärung | EPS Drohnen</title>
+  <meta name="robots" content="noindex, follow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary-green:  #1d5a3d;
+      --primary-light:  #2d8659;
+      --bg-light:       #f8f9f7;
+      --text-dark:      #1a2423;
+      --text-light:     #6b7574;
+      --border:         #e0e5e3;
+      --serif:          'Merriweather', Georgia, serif;
+      --sans:           'Open Sans', system-ui, sans-serif;
+      --radius:         8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg-light); color: var(--text-dark); font-family: var(--sans); line-height: 1.7; }
+    a { color: var(--primary-green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(248,249,247,0.97); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); height: 70px; display: flex; align-items: center; padding: 0 24px; gap: 20px; }
+    .nav-logo { font-family: var(--serif); font-size: 17px; font-weight: 700; color: var(--primary-green); display: flex; align-items: center; gap: 10px; }
+    .nav-logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary-green), var(--primary-light)); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .nav-back { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--primary-green); display: flex; align-items: center; gap: 6px; }
+
+    /* TOC */
+    .toc { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 50px; }
+    .toc h3 { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .toc ol { padding-left: 20px; }
+    .toc li { margin-bottom: 6px; }
+    .toc a { font-size: 14px; color: var(--primary-green); }
+
+    /* CONTENT */
+    .page-wrap { max-width: 800px; margin: 0 auto; padding: 60px 24px 100px; }
+    .page-title { font-family: var(--serif); font-size: clamp(26px, 5vw, 38px); font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+    .page-subtitle { font-size: 14px; color: var(--text-light); margin-bottom: 50px; }
+
+    h2 { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--primary-green); margin: 50px 0 14px; padding-top: 10px; }
+    h3 { font-size: 15px; font-weight: 700; color: var(--text-dark); margin: 28px 0 8px; }
+    p  { font-size: 15px; color: var(--text-light); margin-bottom: 14px; }
+    p strong { color: var(--text-dark); }
+    ul { padding-left: 20px; margin-bottom: 14px; }
+    ul li { font-size: 15px; color: var(--text-light); margin-bottom: 6px; }
+
+    .placeholder { background: #fff3cd; border-left: 3px solid #f4d03f; padding: 3px 10px; border-radius: 4px; font-style: italic; color: #856404; font-size: 14px; display: inline-block; }
+
+    .info-block { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin: 14px 0 20px; }
+    .info-block p { margin-bottom: 6px; }
+    .info-block p:last-child { margin-bottom: 0; }
+
+    .highlight { background: #f0faf4; border-left: 4px solid var(--primary-green); padding: 16px 20px; border-radius: 0 var(--radius) var(--radius) 0; margin: 20px 0; }
+    .highlight p { margin-bottom: 0; }
+
+    .notice { background: #fff3cd; border: 1px solid #f4d03f; border-radius: var(--radius); padding: 16px 20px; margin: 40px 0 0; font-size: 13px; color: #856404; }
+    .notice strong { color: #6d4c00; }
+
+    /* FOOTER */
+    footer { background: var(--primary-green); color: white; text-align: center; padding: 24px; font-size: 13px; }
+    footer a { color: rgba(255,255,255,0.8); margin: 0 10px; }
+    footer a:hover { color: white; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <!-- FIRMENNAME LOGO – hier anpassen -->
+    <div class="nav-logo">
+      <div class="nav-logo-icon">🚁</div>
+      EPS Drohnen
+    </div>
+    <a href="index_preview.html" class="nav-back">← Zurück zur Website</a>
+  </nav>
+
+  <div class="page-wrap">
+
+    <h1 class="page-title">Datenschutzerklärung</h1>
+    <p class="page-subtitle">Stand: Juni 2026 · Zuletzt aktualisiert: <span class="placeholder">[DATUM EINTRAGEN]</span></p>
+
+    <!-- INHALTSVERZEICHNIS -->
+    <div class="toc">
+      <h3>Inhalt</h3>
+      <ol>
+        <li><a href="#ueberblick">Datenschutz auf einen Blick</a></li>
+        <li><a href="#verantwortlicher">Verantwortlicher & Kontakt</a></li>
+        <li><a href="#hosting">Hosting</a></li>
+        <li><a href="#google-fonts">Google Fonts</a></li>
+        <li><a href="#tracking">Anruf-Tracking (lokales System)</a></li>
+        <li><a href="#server-logs">Server-Log-Dateien</a></li>
+        <li><a href="#cookies">Cookies</a></li>
+        <li><a href="#rechte">Ihre Rechte</a></li>
+        <li><a href="#beschwerderecht">Beschwerderecht</a></li>
+      </ol>
+    </div>
+
+    <!-- 1. ÜBERBLICK -->
+    <h2 id="ueberblick">1. Datenschutz auf einen Blick</h2>
+
+    <h3>Allgemeine Hinweise</h3>
+    <p>
+      Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen.
+      Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können.
+      Ausführliche Informationen zum Thema Datenschutz entnehmen Sie unserer unter diesem Text aufgeführten Datenschutzerklärung.
+    </p>
+
+    <h3>Datenerfassung auf dieser Website</h3>
+    <p><strong>Wer ist verantwortlich für die Datenerfassung auf dieser Website?</strong><br>
+      Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber.
+      Dessen Kontaktdaten können Sie dem Abschnitt „Verantwortlicher & Kontakt" in dieser Datenschutzerklärung entnehmen.
+    </p>
+    <p><strong>Wie erfassen wir Ihre Daten?</strong><br>
+      Ihre Daten werden zum einen dadurch erhoben, dass Sie uns diese mitteilen (z. B. durch einen Anruf).
+      Andere Daten werden automatisch oder nach Ihrer Einwilligung beim Besuch der Website durch unsere IT-Systeme erfasst.
+      Das sind vor allem technische Daten (z. B. Internetbrowser, Betriebssystem oder Uhrzeit des Seitenaufrufes).
+    </p>
+    <p><strong>Wofür nutzen wir Ihre Daten?</strong><br>
+      Ein Teil der Daten wird erhoben, um eine fehlerfreie Bereitstellung der Website zu gewährleisten.
+      Andere Daten können zur Analyse des Nutzerverhaltens verwendet werden (anonymisiert, lokal gespeichert, kein Drittanbieter).
+    </p>
+    <p><strong>Welche Rechte haben Sie bezüglich Ihrer Daten?</strong><br>
+      Sie haben jederzeit das Recht, unentgeltlich Auskunft über Herkunft, Empfänger und Zweck Ihrer gespeicherten personenbezogenen Daten zu erhalten.
+      Sie haben außerdem ein Recht, die Berichtigung oder Löschung dieser Daten zu verlangen.
+      Wenn Sie eine Einwilligung zur Datenverarbeitung erteilt haben, können Sie diese Einwilligung jederzeit für die Zukunft widerrufen.
+      Außerdem haben Sie das Recht, unter bestimmten Umständen die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen.
+    </p>
+
+    <!-- 2. VERANTWORTLICHER -->
+    <h2 id="verantwortlicher">2. Verantwortlicher & Kontakt</h2>
+    <p>Verantwortliche Stelle im Sinne der Datenschutzgesetze ist:</p>
+    <div class="info-block">
+      <p><strong><span class="placeholder">[FIRMENNAME / INHABER]</span></strong></p>
+      <p><span class="placeholder">[STRAßE HAUSNUMMER]</span></p>
+      <p><span class="placeholder">[PLZ ORT]</span></p>
+      <p style="margin-top: 10px;">Telefon: <span class="placeholder">[TELEFONNUMMER]</span></p>
+      <p>E-Mail: <span class="placeholder">[E-MAIL-ADRESSE]</span></p>
+    </div>
+
+    <!-- 3. HOSTING -->
+    <h2 id="hosting">3. Hosting</h2>
+    <p>
+      Diese Website wird bei folgendem Anbieter gehostet:
+    </p>
+    <div class="info-block">
+      <p><strong><span class="placeholder">[NAME DES HOSTING-ANBIETERS]</span></strong></p>
+      <p><span class="placeholder">[ADRESSE DES ANBIETERS]</span></p>
+    </div>
+    <p>
+      Der Einsatz des Hosters erfolgt zum Zwecke der Vertragserfüllung gegenüber unseren potenziellen und bestehenden Kunden (Art. 6 Abs. 1 lit. b DSGVO)
+      und im Interesse einer sicheren, schnellen und effizienten Bereitstellung unseres Online-Angebots durch einen professionellen Anbieter (Art. 6 Abs. 1 lit. f DSGVO).
+    </p>
+    <p>
+      Sofern eine entsprechende Einwilligung abgefragt wurde, erfolgt die Verarbeitung ausschließlich auf Grundlage von Art. 6 Abs. 1 lit. a DSGVO und § 25 Abs. 1 TDDDG,
+      soweit die Einwilligung die Speicherung von Cookies oder den Zugriff auf Informationen im Endgerät des Nutzers umfasst.
+      Die Einwilligung ist jederzeit widerrufbar.
+    </p>
+
+    <!-- 4. GOOGLE FONTS -->
+    <h2 id="google-fonts">4. Google Fonts</h2>
+    <p>
+      Diese Seite nutzt zur einheitlichen Darstellung von Schriftarten sogenannte Google Fonts, die von Google bereitgestellt werden.
+      Beim Aufruf einer Seite lädt Ihr Browser die benötigten Fonts in ihren Browsercache, um Texte und Schriftarten korrekt anzuzeigen.
+    </p>
+    <p>
+      Zu diesem Zweck muss der von Ihnen verwendete Browser Verbindung zu den Servern von Google aufnehmen.
+      Hierdurch erlangt Google Kenntnis darüber, dass über Ihre IP-Adresse diese Website aufgerufen wurde.
+      Die Nutzung von Google Fonts erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO.
+      Der Websitebetreiber hat ein berechtigtes Interesse an der einheitlichen Darstellung des Schriftbildes auf seiner Website.
+    </p>
+    <p>
+      Wenn Ihr Browser Google Fonts nicht unterstützt, wird eine Standardschrift von Ihrem Computer genutzt.
+      Weitere Informationen zu Google Fonts finden Sie unter
+      <a href="https://developers.google.com/fonts/faq" target="_blank" rel="noopener noreferrer">https://developers.google.com/fonts/faq</a>
+      und in der Datenschutzerklärung von Google:
+      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a>.
+    </p>
+
+    <!-- 5. ANRUF-TRACKING -->
+    <h2 id="tracking">5. Anruf-Tracking (lokales System)</h2>
+
+    <div class="highlight">
+      <p>
+        <strong>Kein Drittanbieter, keine Cookies, keine Übertragung:</strong>
+        Unser Tracking-System speichert Daten ausschließlich lokal in Ihrem Browser (localStorage).
+        Es werden keine Daten an externe Server übertragen.
+      </p>
+    </div>
+
+    <p>
+      Diese Website erfasst anonymisiert, ob und wann der Anruf-Button geklickt wird.
+      Dabei werden folgende Informationen im <strong>lokalen Speicher Ihres Browsers (localStorage)</strong> abgelegt:
+    </p>
+    <ul>
+      <li>Zeitpunkt des Klicks (Zeitstempel)</li>
+      <li>Verwendetes Gerät (mobil / Tablet / Desktop – keine IP-Adresse)</li>
+      <li>Welcher Button auf der Seite geklickt wurde (z. B. „Hero", „Navigation")</li>
+    </ul>
+    <p>
+      Diese Daten verlassen Ihr Gerät nicht und werden nicht an Dritte weitergegeben.
+      Sie sind ausschließlich für den Websitebetreiber zugänglich, wenn dieser denselben Browser auf demselben Gerät verwendet.
+    </p>
+    <p>
+      <strong>Löschung:</strong> Sie können alle lokal gespeicherten Tracking-Daten jederzeit selbst löschen,
+      indem Sie in Ihrem Browser den Website-Datenspeicher leeren (Einstellungen → Datenschutz → Websitedaten löschen).
+    </p>
+    <p>
+      Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Analyse der Nutzung der Website ohne personenbezogene Datenverarbeitung).
+    </p>
+
+    <!-- 6. SERVER-LOGS -->
+    <h2 id="server-logs">6. Server-Log-Dateien</h2>
+    <p>
+      Der Provider der Seiten erhebt und speichert automatisch Informationen in sogenannten Server-Log-Dateien,
+      die Ihr Browser automatisch an uns übermittelt. Dies sind:
+    </p>
+    <ul>
+      <li>Browsertyp und Browserversion</li>
+      <li>Verwendetes Betriebssystem</li>
+      <li>Referrer URL</li>
+      <li>Hostname des zugreifenden Rechners</li>
+      <li>Uhrzeit der Serveranfrage</li>
+      <li>IP-Adresse (anonymisiert)</li>
+    </ul>
+    <p>
+      Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht vorgenommen.
+      Die Erfassung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO.
+      Der Websitebetreiber hat ein berechtigtes Interesse an der technisch fehlerfreien Darstellung und der Optimierung seiner Website.
+    </p>
+
+    <!-- 7. COOKIES -->
+    <h2 id="cookies">7. Cookies</h2>
+    <p>
+      Diese Website verwendet technisch notwendige Cookies, die für den Betrieb der Seite erforderlich sind.
+      Darüber hinaus setzt diese Website <strong>keine Tracking-Cookies</strong> von Drittanbietern ein.
+      Ein Cookie-Consent-Banner ist daher derzeit nicht erforderlich.
+    </p>
+    <p>
+      Sofern in Zukunft Dienste Dritter (z. B. Google Analytics, Facebook Pixel) eingebunden werden,
+      wird diese Datenschutzerklärung entsprechend aktualisiert und ein Cookie-Consent-Banner implementiert.
+    </p>
+
+    <!-- 8. IHRE RECHTE -->
+    <h2 id="rechte">8. Ihre Rechte</h2>
+
+    <h3>Auskunft, Berichtigung und Löschung</h3>
+    <p>
+      Sie haben im Rahmen der geltenden gesetzlichen Bestimmungen jederzeit das Recht auf unentgeltliche Auskunft
+      über Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung
+      und ggf. ein Recht auf Berichtigung oder Löschung dieser Daten.
+      Hierzu sowie zu weiteren Fragen zum Thema personenbezogene Daten können Sie sich jederzeit an uns wenden.
+    </p>
+
+    <h3>Recht auf Einschränkung der Verarbeitung</h3>
+    <p>
+      Sie haben das Recht, die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen.
+      Hierzu können Sie sich jederzeit an uns wenden.
+    </p>
+
+    <h3>Recht auf Datenübertragbarkeit</h3>
+    <p>
+      Sie haben das Recht, Daten, die wir auf Grundlage Ihrer Einwilligung oder in Erfüllung eines Vertrags automatisiert verarbeiten,
+      an sich oder an einen Dritten in einem gängigen, maschinenlesbaren Format aushändigen zu lassen.
+    </p>
+
+    <h3>Widerspruch gegen Werbe-E-Mails</h3>
+    <p>
+      Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten zur Übersendung von nicht ausdrücklich angeforderter
+      Werbung und Informationsmaterialien wird hiermit widersprochen.
+      Die Betreiber der Seiten behalten sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen,
+      etwa durch Spam-E-Mails, vor.
+    </p>
+
+    <!-- 9. BESCHWERDERECHT -->
+    <h2 id="beschwerderecht">9. Beschwerderecht bei der zuständigen Aufsichtsbehörde</h2>
+    <p>
+      Im Falle von Verstößen gegen die DSGVO steht den Betroffenen ein Beschwerderecht bei einer Aufsichtsbehörde,
+      insbesondere in dem Mitgliedstaat ihres gewöhnlichen Aufenthalts, ihres Arbeitsplatzes oder des Orts des mutmaßlichen Verstoßes zu.
+      Das Beschwerderecht besteht unbeschadet anderweitiger verwaltungsrechtlicher oder gerichtlicher Rechtsbehelfe.
+    </p>
+    <p>
+      Zuständige Aufsichtsbehörde für <span class="placeholder">[BUNDESLAND EINTRAGEN]</span>:
+    </p>
+    <div class="info-block">
+      <p><span class="placeholder">[NAME DER DATENSCHUTZBEHÖRDE DES BUNDESLANDES]</span></p>
+      <p><span class="placeholder">[ADRESSE DER BEHÖRDE]</span></p>
+      <p><span class="placeholder">[WEBSITE DER BEHÖRDE]</span></p>
+    </div>
+
+    <div class="notice">
+      <strong>Hinweis:</strong> Diese Datenschutzerklärung ist eine Vorlage. Bitte alle gelb markierten Felder befüllen
+      und den Text von einem Anwalt oder einem Datenschutz-Generator
+      (z. B. <a href="https://www.e-recht24.de/muster-datenschutzerklaerung.html" target="_blank" rel="noopener noreferrer" style="color: #856404;">eRecht24</a> oder
+      <a href="https://datenschutz-generator.de/" target="_blank" rel="noopener noreferrer" style="color: #856404;">datenschutz-generator.de</a>)
+      prüfen bzw. ersetzen lassen, bevor die Seite live geht.
+    </div>
+
+  </div>
+
+  <footer>
+    <a href="index_preview.html">← Zurück zur Website</a>
+    <a href="impressum.html">Impressum</a>
+    &copy; 2026 EPS Drohnen
+  </footer>
+
+</body>
+</html>
