@@ -129,8 +129,20 @@ metadata:
 
 ## 6. Kollaborations-Setup
 
-- **Malte** (GitHub: milert) – pushes via Claude Code lokal
-- **Jonathan** (GitHub: thetopseller-ops) – pushes direkt via GitHub
-- **Netlify** deployt automatisch bei jedem Push auf `main`
-- **Kein manuelles Publish mehr nötig** (Auto-Publishing aktiv seit 14.06.2026)
-- Wichtig: GitHub Token wurde in der Session kompromittiert → neuen Token generieren und alten invalidieren
+### GitHub-Repository
+- **URL:** https://github.com/thetopseller-ops/insektenblitz
+- **Sichtbarkeit:** Öffentlich (Public) – bewusst so gewählt, damit Netlify Free Plan mit mehreren Contributoren funktioniert
+- **Branch:** `main` (einziger Branch, direkte Zusammenarbeit)
+- **Dieser Projektplan:** https://github.com/thetopseller-ops/insektenblitz/blob/main/PROJEKTPLAN.md
+
+### Team
+- **Malte Ilert** (GitHub: milert) – arbeitet lokal via Claude Code, pusht über Terminal
+- **Jonathan** (GitHub: thetopseller-ops) – Repo-Owner, pusht direkt via GitHub
+
+### Workflow
+- Änderungen lokal oder auf GitHub vornehmen → `git push` auf `main` → Netlify deployt automatisch (Auto-Publishing aktiv seit 14.06.2026)
+- Projektplan aktualisieren: direkt in `PROJEKTPLAN.md` im Repo – beide sehen Änderungen sofort
+- Kein manuelles Publish in Netlify nötig
+
+### Hinweis
+- GitHub Token wurde in der Session vom 14.06.2026 kompromittiert → alten Token invalidieren und neuen generieren
