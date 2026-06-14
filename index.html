@@ -1049,9 +1049,12 @@
 
       <!-- Netlify form (hidden, for bot detection & field registration) -->
       <form name="kontaktanfrage" netlify netlify-honeypot="bot-field" hidden>
-        <input type="text" name="name" />
         <input type="text" name="land" />
-        <input type="text" name="adresse" />
+        <input type="text" name="name" />
+        <input type="text" name="strasse" />
+        <input type="text" name="plz" />
+        <input type="text" name="ort" />
+        <input type="text" name="region" />
         <input type="tel" name="telefon" />
         <input type="email" name="email" />
         <input type="text" name="kundentyp" />
@@ -1077,10 +1080,8 @@
           <div style="background: white; border-radius: 16px; padding: 36px; box-shadow: 0 4px 24px rgba(0,0,0,0.07);">
             <h3 style="font-family: var(--serif); font-size: 21px; font-weight: 700; color: var(--text-dark); margin-bottom: 24px;">Ihre Kontaktdaten</h3>
             <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px;">
-              <div>
-                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Vor- und Nachname *</label>
-                <input id="fName" type="text" placeholder="Max Mustermann" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
-              </div>
+
+              <!-- Land zuerst -->
               <div>
                 <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Land *</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" id="fLandGroup">
@@ -1089,18 +1090,50 @@
                 </div>
                 <input type="hidden" id="fLand" />
               </div>
+
+              <!-- Name -->
               <div>
-                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Adresse / Ort *</label>
-                <input id="fAdresse" type="text" placeholder="Musterstraße 1, 12345 Musterstadt" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Vor- und Nachname *</label>
+                <input id="fName" type="text" placeholder="Max Mustermann" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
               </div>
+
+              <!-- Straße -->
+              <div>
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Straße und Hausnummer *</label>
+                <input id="fStrasse" type="text" placeholder="Musterstraße 12" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+              </div>
+
+              <!-- PLZ + Ort nebeneinander -->
+              <div style="display: grid; grid-template-columns: 140px 1fr; gap: 10px;">
+                <div>
+                  <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">PLZ *</label>
+                  <input id="fPlz" type="text" placeholder="12345" maxlength="10" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+                </div>
+                <div>
+                  <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Ort / Stadt *</label>
+                  <input id="fOrt" type="text" placeholder="Musterstadt" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+                </div>
+              </div>
+
+              <!-- Region -->
+              <div>
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Region / Bundesland <span style="font-weight:400;color:#6b7574;">(z. B. Bayern, Mallorca, Costa del Sol)</span></label>
+                <input id="fRegion" type="text" placeholder="z. B. Nordrhein-Westfalen oder Mallorca" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+              </div>
+
+              <!-- Telefon -->
               <div>
                 <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Rufnummer *</label>
                 <input id="fTelefon" type="tel" placeholder="+49 151 ..." style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
               </div>
+
+              <!-- E-Mail -->
               <div>
                 <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">E-Mail-Adresse *</label>
                 <input id="fEmail" type="email" placeholder="ihre@email.de" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
               </div>
+
+              <!-- Kundentyp -->
               <div>
                 <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 10px;">Ich bin *</label>
                 <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;" id="fKundentypGroup">
@@ -1111,7 +1144,7 @@
                 <input type="hidden" id="fKundentyp" />
               </div>
             </div>
-            <p id="fErr1" style="color:#d9534f;font-size:13px;margin-bottom:12px;display:none;">Bitte alle Pflichtfelder ausfüllen.</p>
+            <p id="fErr1" style="color:#d9534f;font-size:13px;margin-bottom:12px;display:none;"></p>
             <button onclick="fGoTo(2)" style="width:100%;padding:15px;background:var(--primary-green);color:white;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:background 0.2s;" onmouseover="this.style.background='#3fb566'" onmouseout="this.style.background='#1d5a3d'">Weiter →</button>
           </div>
         </div>
@@ -1200,7 +1233,7 @@
 
   <script>
     (function() {
-      var fData = { name:'', land:'', adresse:'', telefon:'', email:'', kundentyp:'', schaedling:'', befall:'' };
+      var fData = { land:'', name:'', strasse:'', plz:'', ort:'', region:'', telefon:'', email:'', kundentyp:'', schaedling:'', befall:'' };
       var steps = ['Ihre Kontaktdaten','Welcher Schädling?','Was ist befallen?','Termin buchen'];
 
       window.fSelectOption = function(groupId, btn, hiddenId) {
@@ -1218,7 +1251,10 @@
       window.fGoTo = function(n) {
         if (n === 2) {
           var name = document.getElementById('fName').value.trim();
-          var adresse = document.getElementById('fAdresse').value.trim();
+          var strasse = document.getElementById('fStrasse').value.trim();
+          var plz = document.getElementById('fPlz').value.trim();
+          var ort = document.getElementById('fOrt').value.trim();
+          var region = document.getElementById('fRegion').value.trim();
           var telefon = document.getElementById('fTelefon').value.trim();
           var email = document.getElementById('fEmail').value.trim();
           var land = document.getElementById('fLand').value;
@@ -1226,21 +1262,18 @@
           var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
           var telOk = /^[\+]?[\d\s\-\(\)]{6,20}$/.test(telefon);
           var err1 = document.getElementById('fErr1');
-          if (!name || !adresse || !land || !kundentyp) {
-            err1.textContent = 'Bitte alle Pflichtfelder ausfüllen.';
-            err1.style.display = 'block'; return;
-          }
-          if (!emailOk) {
-            err1.textContent = 'Bitte eine gültige E-Mail-Adresse eingeben (z. B. name@domain.de).';
-            err1.style.display = 'block'; return;
-          }
-          if (!telOk) {
-            err1.textContent = 'Bitte eine gültige Rufnummer eingeben (mind. 6 Ziffern, z. B. +49 151 12345678).';
-            err1.style.display = 'block'; return;
-          }
+          if (!land) { err1.textContent = 'Bitte ein Land auswählen.'; err1.style.display = 'block'; return; }
+          if (!name) { err1.textContent = 'Bitte Ihren Namen eingeben.'; err1.style.display = 'block'; return; }
+          if (!strasse) { err1.textContent = 'Bitte Straße und Hausnummer eingeben.'; err1.style.display = 'block'; return; }
+          if (!plz) { err1.textContent = 'Bitte die Postleitzahl eingeben.'; err1.style.display = 'block'; return; }
+          if (!ort) { err1.textContent = 'Bitte den Ort eingeben.'; err1.style.display = 'block'; return; }
+          if (!emailOk) { err1.textContent = 'Bitte eine gültige E-Mail-Adresse eingeben (z. B. name@domain.de).'; err1.style.display = 'block'; return; }
+          if (!telOk) { err1.textContent = 'Bitte eine gültige Rufnummer eingeben (mind. 6 Ziffern).'; err1.style.display = 'block'; return; }
+          if (!kundentyp) { err1.textContent = 'Bitte auswählen ob Sie Privat-, Geschäftskunde oder Institution sind.'; err1.style.display = 'block'; return; }
           err1.style.display = 'none';
-          fData.name = name; fData.adresse = adresse; fData.telefon = telefon;
-          fData.email = email; fData.land = land; fData.kundentyp = kundentyp;
+          fData.land = land; fData.name = name; fData.strasse = strasse;
+          fData.plz = plz; fData.ort = ort; fData.region = region;
+          fData.telefon = telefon; fData.email = email; fData.kundentyp = kundentyp;
         }
         if (n === 3) {
           if (!document.getElementById('fSchaedling').value) {
