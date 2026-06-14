@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a5035"/>
+      <stop offset="100%" stop-color="#2d8659"/>
+    </linearGradient>
+    <linearGradient id="bolt" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffe066"/>
+      <stop offset="100%" stop-color="#ffb300"/>
+    </linearGradient>
+  </defs>
+  <!-- Hintergrund -->
+  <rect width="40" height="40" rx="8" fill="url(#bg)"/>
+  <!-- Kleine Drohnen-Rotoren oben links + rechts -->
+  <circle cx="7" cy="7" r="3.5" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+  <circle cx="33" cy="7" r="3.5" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+  <line x1="10" y1="9" x2="15" y2="13" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+  <line x1="30" y1="9" x2="25" y2="13" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+  <!-- Blitz -->
+  <path d="M23 5 L10 22 L18 22 L14 35 L30 18 L22 18 Z" fill="url(#bolt)"/>
+</svg>
