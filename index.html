@@ -1019,6 +1019,222 @@
     </div>
   </section>
 
+  <!-- KONTAKTFORMULAR FUNNEL -->
+  <section id="kontakt" style="background: linear-gradient(135deg, #f0faf4 0%, #e8f5ec 100%); padding: 80px 0;">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 50px;">
+        <h2 class="section-title">Jetzt Erstberatung anfragen</h2>
+        <p class="section-subtitle" style="margin: 0 auto;">In 4 Schritten zu Ihrer unverbindlichen Anfrage – wir melden uns innerhalb von 24 Stunden.</p>
+      </div>
+
+      <!-- Netlify form (hidden, for bot detection & field registration) -->
+      <form name="kontaktanfrage" netlify netlify-honeypot="bot-field" hidden>
+        <input type="text" name="name" />
+        <input type="text" name="land" />
+        <input type="text" name="adresse" />
+        <input type="tel" name="telefon" />
+        <input type="email" name="email" />
+        <input type="text" name="kundentyp" />
+        <input type="text" name="schaedling" />
+        <input type="text" name="befall" />
+      </form>
+
+      <div id="funnel" style="max-width: 660px; margin: 0 auto;">
+
+        <!-- Progress -->
+        <div style="margin-bottom: 36px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span id="fStepLabel" style="font-size: 13px; font-weight: 700; color: var(--primary-green); text-transform: uppercase; letter-spacing: 0.5px;">Schritt 1 von 4</span>
+            <span id="fStepTitle" style="font-size: 13px; color: var(--text-light);">Ihre Kontaktdaten</span>
+          </div>
+          <div style="background: #d4e8da; border-radius: 99px; height: 5px;">
+            <div id="fProgress" style="background: var(--primary-green); height: 5px; border-radius: 99px; width: 25%; transition: width 0.4s ease;"></div>
+          </div>
+        </div>
+
+        <!-- STEP 1: Kontaktdaten -->
+        <div id="fStep1">
+          <div style="background: white; border-radius: 16px; padding: 36px; box-shadow: 0 4px 24px rgba(0,0,0,0.07);">
+            <h3 style="font-family: var(--serif); font-size: 21px; font-weight: 700; color: var(--text-dark); margin-bottom: 24px;">Ihre Kontaktdaten</h3>
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px;">
+              <div>
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Vor- und Nachname *</label>
+                <input id="fName" type="text" placeholder="Max Mustermann" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+              </div>
+              <div>
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Land *</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" id="fLandGroup">
+                  <button type="button" data-value="Deutschland" onclick="fSelectOption('fLandGroup',this,'fLand')" style="padding:12px 8px;border:2px solid #e0e5e3;border-radius:8px;background:white;font-size:14px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;">🇩🇪 Deutschland</button>
+                  <button type="button" data-value="Spanien / Mallorca" onclick="fSelectOption('fLandGroup',this,'fLand')" style="padding:12px 8px;border:2px solid #e0e5e3;border-radius:8px;background:white;font-size:14px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;">🇪🇸 Spanien / Mallorca</button>
+                </div>
+                <input type="hidden" id="fLand" />
+              </div>
+              <div>
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Adresse / Ort *</label>
+                <input id="fAdresse" type="text" placeholder="Musterstraße 1, 12345 Musterstadt" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+              </div>
+              <div>
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Rufnummer *</label>
+                <input id="fTelefon" type="tel" placeholder="+49 151 ..." style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+              </div>
+              <div>
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">E-Mail-Adresse *</label>
+                <input id="fEmail" type="email" placeholder="ihre@email.de" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+              </div>
+              <div>
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 10px;">Ich bin *</label>
+                <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;" id="fKundentypGroup">
+                  <button type="button" data-value="Privatkunde" onclick="fSelectOption('fKundentypGroup',this,'fKundentyp')" style="padding:12px 6px;border:2px solid #e0e5e3;border-radius:8px;background:white;font-size:13px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:center;">🏠<br>Privat</button>
+                  <button type="button" data-value="Geschäftskunde" onclick="fSelectOption('fKundentypGroup',this,'fKundentyp')" style="padding:12px 6px;border:2px solid #e0e5e3;border-radius:8px;background:white;font-size:13px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:center;">🏢<br>Geschäft</button>
+                  <button type="button" data-value="Öffentliche Institution" onclick="fSelectOption('fKundentypGroup',this,'fKundentyp')" style="padding:12px 6px;border:2px solid #e0e5e3;border-radius:8px;background:white;font-size:13px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:center;">🏛️<br>Institution</button>
+                </div>
+                <input type="hidden" id="fKundentyp" />
+              </div>
+            </div>
+            <p id="fErr1" style="color:#d9534f;font-size:13px;margin-bottom:12px;display:none;">Bitte alle Pflichtfelder ausfüllen.</p>
+            <button onclick="fGoTo(2)" style="width:100%;padding:15px;background:var(--primary-green);color:white;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:background 0.2s;" onmouseover="this.style.background='#3fb566'" onmouseout="this.style.background='#1d5a3d'">Weiter →</button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Schädling -->
+        <div id="fStep2" style="display:none;">
+          <div style="background: white; border-radius: 16px; padding: 36px; box-shadow: 0 4px 24px rgba(0,0,0,0.07);">
+            <h3 style="font-family: var(--serif); font-size: 21px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px;">Welcher Schädling?</h3>
+            <p style="font-size: 14px; color: var(--text-light); margin-bottom: 28px;">Wählen Sie den Schädling aus, der Ihr Grundstück befällt.</p>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px;" id="fSchaedlingGroup">
+              <button type="button" data-value="Eichenprozessionsspinner (EPS)" onclick="fSelectOption('fSchaedlingGroup',this,'fSchaedling')" style="padding:18px 20px;border:2px solid #e0e5e3;border-radius:10px;background:white;font-size:15px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:14px;">
+                <span style="font-size:28px;">🌳</span>
+                <div><div style="font-weight:700;">Eichenprozessionsspinner (EPS)</div><div style="font-size:12px;color:#6b7574;font-weight:400;margin-top:2px;">Giftige Brennhaare, befällt Eichen</div></div>
+              </button>
+              <button type="button" data-value="Goldafter" onclick="fSelectOption('fSchaedlingGroup',this,'fSchaedling')" style="padding:18px 20px;border:2px solid #e0e5e3;border-radius:10px;background:white;font-size:15px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:14px;">
+                <span style="font-size:28px;">🦋</span>
+                <div><div style="font-weight:700;">Goldafter</div><div style="font-size:12px;color:#6b7574;font-weight:400;margin-top:2px;">Reizt Haut und Atemwege</div></div>
+              </button>
+              <button type="button" data-value="Palmenzünsler" onclick="fSelectOption('fSchaedlingGroup',this,'fSchaedling')" style="padding:18px 20px;border:2px solid #e0e5e3;border-radius:10px;background:white;font-size:15px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:14px;">
+                <span style="font-size:28px;">🌴</span>
+                <div><div style="font-weight:700;">Palmenzünsler</div><div style="font-size:12px;color:#6b7574;font-weight:400;margin-top:2px;">Befällt Palmen, häufig auf Mallorca</div></div>
+              </button>
+              <button type="button" data-value="Anderer / Unbekannt" onclick="fSelectOption('fSchaedlingGroup',this,'fSchaedling')" style="padding:18px 20px;border:2px solid #e0e5e3;border-radius:10px;background:white;font-size:15px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:14px;">
+                <span style="font-size:28px;">❓</span>
+                <div><div style="font-weight:700;">Anderer / Unbekannt</div><div style="font-size:12px;color:#6b7574;font-weight:400;margin-top:2px;">Ich bin mir nicht sicher</div></div>
+              </button>
+            </div>
+            <input type="hidden" id="fSchaedling" />
+            <p id="fErr2" style="color:#d9534f;font-size:13px;margin-bottom:12px;display:none;">Bitte eine Option auswählen.</p>
+            <div style="display:flex;gap:12px;">
+              <button onclick="fGoTo(1)" style="padding:15px 24px;background:white;color:var(--text-dark);border:2px solid var(--border);border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--sans);">← Zurück</button>
+              <button onclick="fGoTo(3)" style="flex:1;padding:15px;background:var(--primary-green);color:white;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:background 0.2s;" onmouseover="this.style.background='#3fb566'" onmouseout="this.style.background='#1d5a3d'">Weiter →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Befall -->
+        <div id="fStep3" style="display:none;">
+          <div style="background: white; border-radius: 16px; padding: 36px; box-shadow: 0 4px 24px rgba(0,0,0,0.07);">
+            <h3 style="font-family: var(--serif); font-size: 21px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px;">Was ist befallen?</h3>
+            <p style="font-size: 14px; color: var(--text-light); margin-bottom: 28px;">Das hilft uns, den Aufwand des Einsatzes einzuschätzen.</p>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px;" id="fBefallGroup">
+              <button type="button" data-value="Ein Baum" onclick="fSelectOption('fBefallGroup',this,'fBefall')" style="padding:18px 20px;border:2px solid #e0e5e3;border-radius:10px;background:white;font-size:15px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:14px;">
+                <span style="font-size:28px;">🌲</span>
+                <div><div style="font-weight:700;">Ein Baum</div><div style="font-size:12px;color:#6b7574;font-weight:400;margin-top:2px;">Einzelner Baum / Einzelne Palme</div></div>
+              </button>
+              <button type="button" data-value="Mehrere Bäume" onclick="fSelectOption('fBefallGroup',this,'fBefall')" style="padding:18px 20px;border:2px solid #e0e5e3;border-radius:10px;background:white;font-size:15px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:14px;">
+                <span style="font-size:28px;">🌳🌳</span>
+                <div><div style="font-weight:700;">Mehrere Bäume</div><div style="font-size:12px;color:#6b7574;font-weight:400;margin-top:2px;">2–20 Bäume / Kleines Grundstück</div></div>
+              </button>
+              <button type="button" data-value="Ganzes Areal" onclick="fSelectOption('fBefallGroup',this,'fBefall')" style="padding:18px 20px;border:2px solid #e0e5e3;border-radius:10px;background:white;font-size:15px;font-weight:600;color:#1a2423;cursor:pointer;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:14px;">
+                <span style="font-size:28px;">🏞️</span>
+                <div><div style="font-weight:700;">Ganzes Areal</div><div style="font-size:12px;color:#6b7574;font-weight:400;margin-top:2px;">Großes Gelände / Park / Wald</div></div>
+              </button>
+            </div>
+            <input type="hidden" id="fBefall" />
+            <p id="fErr3" style="color:#d9534f;font-size:13px;margin-bottom:12px;display:none;">Bitte eine Option auswählen.</p>
+            <div style="display:flex;gap:12px;">
+              <button onclick="fGoTo(2)" style="padding:15px 24px;background:white;color:var(--text-dark);border:2px solid var(--border);border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--sans);">← Zurück</button>
+              <button onclick="fGoTo(4)" style="flex:1;padding:15px;background:var(--primary-green);color:white;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--sans);transition:background 0.2s;" onmouseover="this.style.background='#3fb566'" onmouseout="this.style.background='#1d5a3d'">Weiter →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Calendly -->
+        <div id="fStep4" style="display:none;">
+          <div style="background: white; border-radius: 16px; padding: 36px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); text-align: center;">
+            <div style="width:64px;height:64px;background:linear-gradient(135deg,#1d5a3d,#2d8659);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;">✅</div>
+            <h3 style="font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--text-dark); margin-bottom: 12px;">Fast geschafft!</h3>
+            <p style="font-size: 15px; color: var(--text-light); margin-bottom: 32px; line-height: 1.7;">Ihre Angaben wurden übermittelt. Suchen Sie sich jetzt direkt einen Termin für Ihr <strong style="color:var(--text-dark);">kostenloses Erstgespräch</strong> aus – wir sind für Sie da.</p>
+            <a href="https://calendly.com/fassadenblitzgmbh/termin-mit-malte-ilert" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:16px 36px;background:var(--primary-green);color:white;border-radius:8px;font-size:16px;font-weight:700;font-family:var(--sans);text-decoration:none;transition:background 0.2s;margin-bottom:20px;" onmouseover="this.style.background='#3fb566'" onmouseout="this.style.background='#1d5a3d'">📅 Termin auswählen</a>
+            <p style="font-size: 13px; color: var(--text-light);">Alternativ erreichen Sie uns direkt unter <a href="tel:+4915151001255" style="color:var(--primary-green);font-weight:600;">+49 151 51001255</a></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function() {
+      var fData = { name:'', land:'', adresse:'', telefon:'', email:'', kundentyp:'', schaedling:'', befall:'' };
+      var steps = ['Ihre Kontaktdaten','Welcher Schädling?','Was ist befallen?','Termin buchen'];
+
+      window.fSelectOption = function(groupId, btn, hiddenId) {
+        document.querySelectorAll('#'+groupId+' button').forEach(function(b) {
+          b.style.borderColor = '#e0e5e3';
+          b.style.background = 'white';
+          b.style.color = '#1a2423';
+        });
+        btn.style.borderColor = '#1d5a3d';
+        btn.style.background = '#f0faf4';
+        btn.style.color = '#1d5a3d';
+        document.getElementById(hiddenId).value = btn.dataset.value;
+      };
+
+      window.fGoTo = function(n) {
+        if (n === 2) {
+          var name = document.getElementById('fName').value.trim();
+          var adresse = document.getElementById('fAdresse').value.trim();
+          var telefon = document.getElementById('fTelefon').value.trim();
+          var email = document.getElementById('fEmail').value.trim();
+          var land = document.getElementById('fLand').value;
+          var kundentyp = document.getElementById('fKundentyp').value;
+          if (!name || !adresse || !telefon || !email || !land || !kundentyp) {
+            document.getElementById('fErr1').style.display = 'block';
+            return;
+          }
+          document.getElementById('fErr1').style.display = 'none';
+          fData.name = name; fData.adresse = adresse; fData.telefon = telefon;
+          fData.email = email; fData.land = land; fData.kundentyp = kundentyp;
+        }
+        if (n === 3) {
+          if (!document.getElementById('fSchaedling').value) {
+            document.getElementById('fErr2').style.display = 'block'; return;
+          }
+          document.getElementById('fErr2').style.display = 'none';
+          fData.schaedling = document.getElementById('fSchaedling').value;
+        }
+        if (n === 4) {
+          if (!document.getElementById('fBefall').value) {
+            document.getElementById('fErr3').style.display = 'block'; return;
+          }
+          document.getElementById('fErr3').style.display = 'none';
+          fData.befall = document.getElementById('fBefall').value;
+          fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(Object.assign({ 'form-name': 'kontaktanfrage' }, fData)).toString()
+          }).catch(function(){});
+        }
+        for (var i = 1; i <= 4; i++) {
+          var el = document.getElementById('fStep'+i);
+          if (el) el.style.display = i === n ? 'block' : 'none';
+        }
+        document.getElementById('fStepLabel').textContent = 'Schritt ' + n + ' von 4';
+        document.getElementById('fStepTitle').textContent = steps[n-1];
+        document.getElementById('fProgress').style.width = (n * 25) + '%';
+        document.getElementById('funnel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+    })();
+  </script>
+
   <!-- FOOTER -->
   <footer style="background: var(--primary-green); color: white; padding: 60px 0 30px 0;">
     <div class="container">

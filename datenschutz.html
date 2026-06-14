@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Datenschutzerklärung | Insektenblitz</title>
+  <meta name="robots" content="noindex, follow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary-green:  #1d5a3d;
+      --primary-light:  #2d8659;
+      --bg-light:       #f8f9f7;
+      --text-dark:      #1a2423;
+      --text-light:     #6b7574;
+      --border:         #e0e5e3;
+      --serif:          'Merriweather', Georgia, serif;
+      --sans:           'Open Sans', system-ui, sans-serif;
+      --radius:         8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg-light); color: var(--text-dark); font-family: var(--sans); line-height: 1.7; }
+    a { color: var(--primary-green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(248,249,247,0.97); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); height: 70px; display: flex; align-items: center; padding: 0 24px; gap: 20px; }
+    .nav-logo { font-family: var(--serif); font-size: 17px; font-weight: 700; color: var(--primary-green); display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary-green), var(--primary-light)); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .nav-back { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--primary-green); display: flex; align-items: center; gap: 6px; }
+
+    .toc { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 50px; }
+    .toc h3 { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .toc ol { padding-left: 20px; }
+    .toc li { margin-bottom: 6px; }
+    .toc a { font-size: 14px; color: var(--primary-green); }
+
+    .page-wrap { max-width: 800px; margin: 0 auto; padding: 60px 24px 100px; }
+    .page-title { font-family: var(--serif); font-size: clamp(26px, 5vw, 38px); font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+    .page-subtitle { font-size: 14px; color: var(--text-light); margin-bottom: 50px; }
+
+    h2 { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--primary-green); margin: 50px 0 14px; padding-top: 10px; }
+    h3 { font-size: 15px; font-weight: 700; color: var(--text-dark); margin: 28px 0 8px; }
+    p  { font-size: 15px; color: var(--text-light); margin-bottom: 14px; }
+    p strong { color: var(--text-dark); }
+    ul { padding-left: 20px; margin-bottom: 14px; }
+    ul li { font-size: 15px; color: var(--text-light); margin-bottom: 6px; }
+
+    .info-block { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin: 14px 0 20px; }
+    .info-block p { margin-bottom: 6px; }
+    .info-block p:last-child { margin-bottom: 0; }
+
+    .highlight { background: #f0faf4; border-left: 4px solid var(--primary-green); padding: 16px 20px; border-radius: 0 var(--radius) var(--radius) 0; margin: 20px 0; }
+    .highlight p { margin-bottom: 0; }
+
+    footer { background: var(--primary-green); color: white; text-align: center; padding: 24px; font-size: 13px; }
+    footer a { color: rgba(255,255,255,0.8); margin: 0 10px; }
+    footer a:hover { color: white; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">⚡</div>
+      Insektenblitz
+    </a>
+    <a href="index.html" class="nav-back">← Zurück zur Website</a>
+  </nav>
+
+  <div class="page-wrap">
+
+    <h1 class="page-title">Datenschutzerklärung</h1>
+    <p class="page-subtitle">Stand: Juni 2026</p>
+
+    <div class="toc">
+      <h3>Inhalt</h3>
+      <ol>
+        <li><a href="#ueberblick">Datenschutz auf einen Blick</a></li>
+        <li><a href="#verantwortlicher">Verantwortlicher & Kontakt</a></li>
+        <li><a href="#hosting">Hosting (Netlify)</a></li>
+        <li><a href="#google-fonts">Google Fonts</a></li>
+        <li><a href="#tracking">Anruf-Tracking (lokal)</a></li>
+        <li><a href="#server-logs">Server-Log-Dateien</a></li>
+        <li><a href="#cookies">Cookies</a></li>
+        <li><a href="#kontakt">Kontaktaufnahme</a></li>
+        <li><a href="#rechte">Ihre Rechte</a></li>
+        <li><a href="#beschwerderecht">Aufsichtsbehörde</a></li>
+      </ol>
+    </div>
+
+    <!-- 1. ÜBERBLICK -->
+    <h2 id="ueberblick">1. Datenschutz auf einen Blick</h2>
+
+    <h3>Allgemeine Hinweise</h3>
+    <p>
+      Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten
+      passiert, wenn Sie diese Website besuchen. Personenbezogene Daten sind alle Daten, mit denen Sie
+      persönlich identifiziert werden können.
+    </p>
+
+    <h3>Datenerfassung auf dieser Website</h3>
+    <p><strong>Wer ist verantwortlich für die Datenerfassung auf dieser Website?</strong><br>
+      Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber.
+      Dessen Kontaktdaten können Sie dem Abschnitt „Verantwortlicher & Kontakt" entnehmen.
+    </p>
+    <p><strong>Wie erfassen wir Ihre Daten?</strong><br>
+      Ihre Daten werden zum einen dadurch erhoben, dass Sie uns diese mitteilen (z. B. durch einen Anruf oder
+      eine E-Mail). Andere Daten werden automatisch beim Besuch der Website durch unsere IT-Systeme erfasst –
+      das sind vor allem technische Daten (z. B. Internetbrowser, Betriebssystem, Uhrzeit des Seitenaufrufs).
+    </p>
+    <p><strong>Wofür nutzen wir Ihre Daten?</strong><br>
+      Ein Teil der Daten wird erhoben, um eine fehlerfreie Bereitstellung der Website zu gewährleisten.
+      Andere Daten können zur anonymisierten Analyse des Nutzerverhaltens verwendet werden
+      (lokal gespeichert, kein Drittanbieter).
+    </p>
+    <p><strong>Welche Rechte haben Sie bezüglich Ihrer Daten?</strong><br>
+      Sie haben jederzeit das Recht, unentgeltlich Auskunft über Herkunft, Empfänger und Zweck Ihrer
+      gespeicherten personenbezogenen Daten zu erhalten sowie das Recht auf Berichtigung oder Löschung.
+      Außerdem haben Sie das Recht, unter bestimmten Umständen die Einschränkung der Verarbeitung zu verlangen.
+      Hierzu sowie zu weiteren Fragen zum Datenschutz können Sie sich jederzeit an uns wenden.
+    </p>
+
+    <!-- 2. VERANTWORTLICHER -->
+    <h2 id="verantwortlicher">2. Verantwortlicher & Kontakt</h2>
+    <p>Verantwortliche Stelle im Sinne der Datenschutzgesetze ist:</p>
+    <div class="info-block">
+      <p><strong>Senior Living UG (haftungsbeschränkt)</strong></p>
+      <p>Taubenweg 17</p>
+      <p>32805 Horn-Bad Meinberg</p>
+      <p style="margin-top: 10px;">Telefon: <a href="tel:+4915151001255">+49 151 51001255</a></p>
+      <p>E-Mail: <a href="mailto:info@insektenblitz.com">info@insektenblitz.com</a></p>
+    </div>
+
+    <!-- 3. HOSTING -->
+    <h2 id="hosting">3. Hosting (Netlify)</h2>
+    <p>Diese Website wird gehostet bei:</p>
+    <div class="info-block">
+      <p><strong>Netlify, Inc.</strong></p>
+      <p>44 Montgomery Street, Suite 300</p>
+      <p>San Francisco, California 94104, USA</p>
+      <p style="margin-top: 10px;"><a href="https://www.netlify.com/privacy/" target="_blank" rel="noopener noreferrer">https://www.netlify.com/privacy/</a></p>
+    </div>
+    <p>
+      Der Einsatz von Netlify erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Wir haben ein berechtigtes
+      Interesse an einer möglichst zuverlässigen Darstellung unserer Website. Sofern eine entsprechende
+      Einwilligung abgefragt wurde, erfolgt die Verarbeitung ausschließlich auf Grundlage von Art. 6 Abs. 1
+      lit. a DSGVO.
+    </p>
+    <p>
+      Netlify verarbeitet Ihre Daten in den USA. Netlify ist nach dem EU-U.S. Data Privacy Framework
+      zertifiziert, das einen angemessenen Datenschutz gemäß EU-Standards gewährleistet.
+      Weitere Informationen finden Sie in der Datenschutzrichtlinie von Netlify.
+    </p>
+
+    <!-- 4. GOOGLE FONTS -->
+    <h2 id="google-fonts">4. Google Fonts</h2>
+    <p>
+      Diese Seite nutzt zur einheitlichen Darstellung von Schriftarten Google Fonts, die von Google
+      bereitgestellt werden. Beim Aufruf einer Seite lädt Ihr Browser die benötigten Fonts in den
+      Browsercache. Zu diesem Zweck nimmt der von Ihnen verwendete Browser Verbindung zu den Servern
+      von Google auf – hierdurch erlangt Google Kenntnis darüber, dass Ihre IP-Adresse diese Website
+      aufgerufen hat.
+    </p>
+    <p>
+      Die Nutzung von Google Fonts erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
+      Interesse an einheitlicher Schriftdarstellung). Wenn Ihr Browser Google Fonts nicht unterstützt,
+      wird eine Standardschrift verwendet.
+    </p>
+    <p>
+      Weitere Informationen: <a href="https://developers.google.com/fonts/faq" target="_blank" rel="noopener noreferrer">developers.google.com/fonts/faq</a>
+      und <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a>.
+    </p>
+
+    <!-- 5. ANRUF-TRACKING -->
+    <h2 id="tracking">5. Anruf-Tracking (lokal)</h2>
+
+    <div class="highlight">
+      <p>
+        <strong>Kein Drittanbieter, keine Cookies, keine Übertragung:</strong>
+        Unser Tracking-System speichert Daten ausschließlich lokal in Ihrem Browser (localStorage).
+        Es werden keine Daten an externe Server übertragen.
+      </p>
+    </div>
+
+    <p>
+      Diese Website erfasst anonymisiert, ob und wann der Anruf-Button geklickt wird.
+      Dabei werden folgende Informationen im <strong>lokalen Speicher Ihres Browsers (localStorage)</strong> abgelegt:
+    </p>
+    <ul>
+      <li>Zeitpunkt des Klicks (Zeitstempel)</li>
+      <li>Verwendetes Gerät (mobil / Tablet / Desktop – keine IP-Adresse)</li>
+      <li>Welcher Button auf der Seite geklickt wurde (z. B. „Hero", „Navigation")</li>
+    </ul>
+    <p>
+      Diese Daten verlassen Ihr Gerät nicht und werden nicht an Dritte weitergegeben.
+      Sie können alle lokal gespeicherten Daten jederzeit selbst löschen:
+      Browsereinstellungen → Datenschutz → Websitedaten löschen.
+    </p>
+    <p>
+      Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an anonymisierter Nutzungsanalyse).
+    </p>
+
+    <!-- 6. SERVER-LOGS -->
+    <h2 id="server-logs">6. Server-Log-Dateien</h2>
+    <p>
+      Der Hosting-Anbieter erhebt und speichert automatisch Informationen in sogenannten Server-Log-Dateien,
+      die Ihr Browser automatisch übermittelt:
+    </p>
+    <ul>
+      <li>Browsertyp und Browserversion</li>
+      <li>Verwendetes Betriebssystem</li>
+      <li>Referrer URL</li>
+      <li>Hostname des zugreifenden Rechners</li>
+      <li>Uhrzeit der Serveranfrage</li>
+      <li>IP-Adresse (anonymisiert)</li>
+    </ul>
+    <p>
+      Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht vorgenommen.
+      Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an technisch fehlerfreier
+      Darstellung und Optimierung der Website).
+    </p>
+
+    <!-- 7. COOKIES -->
+    <h2 id="cookies">7. Cookies</h2>
+    <p>
+      Diese Website verwendet ausschließlich technisch notwendige Cookies, die für den Betrieb der Seite
+      erforderlich sind. Darüber hinaus setzt diese Website <strong>keine Tracking-Cookies</strong> von
+      Drittanbietern ein. Ein Cookie-Consent-Banner ist daher derzeit nicht erforderlich.
+    </p>
+    <p>
+      Sofern in Zukunft Dienste Dritter (z. B. Google Analytics) eingebunden werden, wird diese
+      Datenschutzerklärung entsprechend aktualisiert und ein Consent-Banner implementiert.
+    </p>
+
+    <!-- 8. KONTAKT -->
+    <h2 id="kontakt">8. Kontaktaufnahme</h2>
+    <p>
+      Wenn Sie uns per Telefon oder E-Mail kontaktieren, wird Ihre Anfrage inklusive aller daraus
+      hervorgehenden personenbezogenen Daten (Name, Anfrage) zum Zweck der Bearbeitung Ihres Anliegens
+      bei uns gespeichert und verarbeitet.
+    </p>
+    <p>
+      Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO, sofern Ihre
+      Anfrage mit der Erfüllung eines Vertrags zusammenhängt oder zur Durchführung vorvertraglicher
+      Maßnahmen erforderlich ist. In allen übrigen Fällen beruht die Verarbeitung auf unserem berechtigten
+      Interesse an der effektiven Bearbeitung der an uns gerichteten Anfragen (Art. 6 Abs. 1 lit. f DSGVO).
+    </p>
+    <p>
+      Die von Ihnen übermittelten Daten verbleiben bei uns, bis Sie uns zur Löschung auffordern, Ihre
+      Einwilligung zur Speicherung widerrufen oder der Zweck für die Datenspeicherung entfällt.
+      Zwingende gesetzliche Bestimmungen – insbesondere gesetzliche Aufbewahrungsfristen – bleiben unberührt.
+    </p>
+
+    <!-- 9. RECHTE -->
+    <h2 id="rechte">9. Ihre Rechte</h2>
+
+    <h3>Auskunft, Berichtigung und Löschung</h3>
+    <p>
+      Sie haben im Rahmen der geltenden gesetzlichen Bestimmungen jederzeit das Recht auf unentgeltliche
+      Auskunft über Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger sowie den
+      Zweck der Datenverarbeitung und ggf. ein Recht auf Berichtigung oder Löschung dieser Daten.
+      Hierzu können Sie sich jederzeit an uns wenden.
+    </p>
+
+    <h3>Recht auf Einschränkung der Verarbeitung</h3>
+    <p>
+      Sie haben das Recht, die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen.
+      Hierzu können Sie sich jederzeit an uns wenden. Das Recht auf Einschränkung der Verarbeitung besteht
+      in folgenden Fällen:
+    </p>
+    <ul>
+      <li>Wenn Sie die Richtigkeit Ihrer bei uns gespeicherten personenbezogenen Daten bestreiten</li>
+      <li>Wenn die Verarbeitung Ihrer personenbezogenen Daten unrechtmäßig geschah oder geschieht</li>
+      <li>Wenn Sie Widerspruch gegen die Verarbeitung eingelegt haben (Art. 21 DSGVO)</li>
+    </ul>
+
+    <h3>Recht auf Datenübertragbarkeit</h3>
+    <p>
+      Sie haben das Recht, Daten, die wir auf Grundlage Ihrer Einwilligung oder in Erfüllung eines Vertrags
+      automatisiert verarbeiten, an sich oder an einen Dritten in einem gängigen, maschinenlesbaren Format
+      aushändigen zu lassen (Art. 20 DSGVO).
+    </p>
+
+    <h3>Widerspruch gegen Werbe-E-Mails</h3>
+    <p>
+      Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten zur Übersendung von
+      nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit widersprochen.
+      Die Betreiber behalten sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung
+      von Werbeinformationen, etwa durch Spam-E-Mails, vor.
+    </p>
+
+    <!-- 10. AUFSICHTSBEHÖRDE -->
+    <h2 id="beschwerderecht">10. Zuständige Aufsichtsbehörde</h2>
+    <p>
+      Im Falle von Verstößen gegen die DSGVO steht den Betroffenen ein Beschwerderecht bei einer
+      Aufsichtsbehörde zu. Zuständige Aufsichtsbehörde für Nordrhein-Westfalen:
+    </p>
+    <div class="info-block">
+      <p><strong>Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen (LDI NRW)</strong></p>
+      <p>Kavalleriestraße 2–4</p>
+      <p>40213 Düsseldorf</p>
+      <p style="margin-top: 10px;"><a href="https://www.ldi.nrw.de" target="_blank" rel="noopener noreferrer">www.ldi.nrw.de</a></p>
+    </div>
+
+  </div>
+
+  <footer>
+    <a href="index.html">← Zurück zur Website</a>
+    <a href="impressum.html">Impressum</a>
+    &copy; 2026 Senior Living UG
+  </footer>
+
+</body>
+</html>
