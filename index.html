@@ -1574,15 +1574,22 @@
   </div>
 
   <script>
-    // GA4 – nur laden wenn Consent gegeben
+    // Google Consent Mode v2 – Standardwerte VOR dem Laden von GA4 setzen
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+      analytics_storage:    'denied',
+      ad_storage:           'denied',
+      ad_user_data:         'denied',
+      ad_personalization:   'denied',
+      wait_for_update:       500
+    });
+
     function loadGA() {
       var s = document.createElement('script');
       s.async = true;
       s.src = 'https://www.googletagmanager.com/gtag/js?id=G-E36KRE73ZE';
       document.head.appendChild(s);
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      window.gtag = gtag;
       gtag('js', new Date());
       gtag('config', 'G-E36KRE73ZE', { anonymize_ip: true });
     }
@@ -1591,6 +1598,8 @@
       localStorage.setItem('cookie_ok', '1');
       localStorage.setItem('cookie_analytics', '1');
       document.getElementById('cookieBanner').style.display = 'none';
+      // Consent Mode v2 – Einwilligung erteilt
+      gtag('consent', 'update', { analytics_storage: 'granted' });
       loadGA();
     }
 
@@ -1598,12 +1607,14 @@
       localStorage.setItem('cookie_ok', '1');
       localStorage.setItem('cookie_analytics', '0');
       document.getElementById('cookieBanner').style.display = 'none';
+      // analytics_storage bleibt 'denied'
     }
 
-    // Beim Laden prüfen
+    // Beim Laden: gespeicherte Entscheidung prüfen
     if (!localStorage.getItem('cookie_ok')) {
       document.getElementById('cookieBanner').style.display = 'block';
     } else if (localStorage.getItem('cookie_analytics') === '1') {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
       loadGA();
     }
   </script>
