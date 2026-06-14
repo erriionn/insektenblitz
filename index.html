@@ -1025,6 +1025,7 @@
         <input type="text" name="land" />
         <input type="text" name="adresse" />
         <input type="tel" name="telefon" />
+        <input type="email" name="email" />
         <input type="text" name="kundentyp" />
         <input type="text" name="schaedling" />
         <input type="text" name="befall" />
@@ -1067,6 +1068,10 @@
               <div>
                 <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">Rufnummer *</label>
                 <input id="fTelefon" type="tel" placeholder="+49 151 ..." style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
+              </div>
+              <div>
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 6px;">E-Mail-Adresse *</label>
+                <input id="fEmail" type="email" placeholder="ihre@email.de" style="width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:var(--sans);outline:none;transition:border 0.2s;box-sizing:border-box;" onfocus="this.style.borderColor='#1d5a3d'" onblur="this.style.borderColor='#e0e5e3'" />
               </div>
               <div>
                 <label style="font-size: 13px; font-weight: 600; color: var(--text-dark); display: block; margin-bottom: 10px;">Ich bin *</label>
@@ -1160,7 +1165,7 @@
 
   <script>
     (function() {
-      var fData = { name:'', land:'', adresse:'', telefon:'', kundentyp:'', schaedling:'', befall:'' };
+      var fData = { name:'', land:'', adresse:'', telefon:'', email:'', kundentyp:'', schaedling:'', befall:'' };
       var steps = ['Ihre Kontaktdaten','Welcher Schädling?','Was ist befallen?','Termin buchen'];
 
       window.fSelectOption = function(groupId, btn, hiddenId) {
@@ -1180,15 +1185,16 @@
           var name = document.getElementById('fName').value.trim();
           var adresse = document.getElementById('fAdresse').value.trim();
           var telefon = document.getElementById('fTelefon').value.trim();
+          var email = document.getElementById('fEmail').value.trim();
           var land = document.getElementById('fLand').value;
           var kundentyp = document.getElementById('fKundentyp').value;
-          if (!name || !adresse || !telefon || !land || !kundentyp) {
+          if (!name || !adresse || !telefon || !email || !land || !kundentyp) {
             document.getElementById('fErr1').style.display = 'block';
             return;
           }
           document.getElementById('fErr1').style.display = 'none';
           fData.name = name; fData.adresse = adresse; fData.telefon = telefon;
-          fData.land = land; fData.kundentyp = kundentyp;
+          fData.email = email; fData.land = land; fData.kundentyp = kundentyp;
         }
         if (n === 3) {
           if (!document.getElementById('fSchaedling').value) {
