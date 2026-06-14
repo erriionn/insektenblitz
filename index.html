@@ -1216,11 +1216,22 @@
           var email = document.getElementById('fEmail').value.trim();
           var land = document.getElementById('fLand').value;
           var kundentyp = document.getElementById('fKundentyp').value;
-          if (!name || !adresse || !telefon || !email || !land || !kundentyp) {
-            document.getElementById('fErr1').style.display = 'block';
-            return;
+          var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+          var telOk = /^[\+]?[\d\s\-\(\)]{6,20}$/.test(telefon);
+          var err1 = document.getElementById('fErr1');
+          if (!name || !adresse || !land || !kundentyp) {
+            err1.textContent = 'Bitte alle Pflichtfelder ausfüllen.';
+            err1.style.display = 'block'; return;
           }
-          document.getElementById('fErr1').style.display = 'none';
+          if (!emailOk) {
+            err1.textContent = 'Bitte eine gültige E-Mail-Adresse eingeben (z. B. name@domain.de).';
+            err1.style.display = 'block'; return;
+          }
+          if (!telOk) {
+            err1.textContent = 'Bitte eine gültige Rufnummer eingeben (mind. 6 Ziffern, z. B. +49 151 12345678).';
+            err1.style.display = 'block'; return;
+          }
+          err1.style.display = 'none';
           fData.name = name; fData.adresse = adresse; fData.telefon = telefon;
           fData.email = email; fData.land = land; fData.kundentyp = kundentyp;
         }
