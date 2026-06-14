@@ -1554,25 +1554,57 @@
   </script>
 
   <!-- COOKIE-BANNER -->
-  <div id="cookieBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#1a2423; color:white; padding:18px 24px; z-index:9999; box-shadow:0 -4px 20px rgba(0,0,0,0.3);">
-    <div style="max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;">
-      <p style="margin:0; font-size:14px; line-height:1.6; color:rgba(255,255,255,0.9);">
-        Diese Website verwendet ausschließlich technisch notwendige Cookies. Es werden keine Tracking- oder Marketing-Cookies eingesetzt.
-        Weitere Informationen in unserer <a href="datenschutz.html" style="color:#ffe066; text-decoration:underline;">Datenschutzerklärung</a>.
-      </p>
-      <div style="display:flex; gap:12px; flex-shrink:0;">
-        <button onclick="cookieAccept()" style="background:#2d8659; color:white; border:none; padding:10px 24px; border-radius:6px; font-size:14px; font-weight:700; cursor:pointer;">Verstanden</button>
-        <a href="datenschutz.html" style="color:rgba(255,255,255,0.7); font-size:13px; text-decoration:none; display:flex; align-items:center;">Mehr erfahren</a>
+  <div id="cookieBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#1a2423; color:white; padding:20px 24px; z-index:9999; box-shadow:0 -4px 20px rgba(0,0,0,0.3);">
+    <div style="max-width:1100px; margin:0 auto;">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:280px;">
+          <p style="margin:0 0 6px; font-size:15px; font-weight:700; color:white;">Wir nutzen Cookies</p>
+          <p style="margin:0; font-size:13px; line-height:1.6; color:rgba(255,255,255,0.8);">
+            Technisch notwendige Cookies sind immer aktiv. Mit Ihrer Zustimmung nutzen wir zusätzlich
+            <strong style="color:white;">Google Analytics</strong> zur anonymisierten Analyse der Seitennutzung.
+            Weitere Informationen in unserer <a href="datenschutz.html" style="color:#ffe066; text-decoration:underline;">Datenschutzerklärung</a>.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px; flex-shrink:0; align-items:center; flex-wrap:wrap;">
+          <button onclick="cookieReject()" style="background:transparent; color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.3); padding:10px 20px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer;">Nur notwendige</button>
+          <button onclick="cookieAcceptAll()" style="background:#2d8659; color:white; border:none; padding:10px 24px; border-radius:6px; font-size:14px; font-weight:700; cursor:pointer;">Alle akzeptieren</button>
+        </div>
       </div>
     </div>
   </div>
+
   <script>
-    function cookieAccept() {
+    // GA4 – nur laden wenn Consent gegeben
+    function loadGA() {
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-E36KRE73ZE';
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-E36KRE73ZE', { anonymize_ip: true });
+    }
+
+    function cookieAcceptAll() {
       localStorage.setItem('cookie_ok', '1');
+      localStorage.setItem('cookie_analytics', '1');
+      document.getElementById('cookieBanner').style.display = 'none';
+      loadGA();
+    }
+
+    function cookieReject() {
+      localStorage.setItem('cookie_ok', '1');
+      localStorage.setItem('cookie_analytics', '0');
       document.getElementById('cookieBanner').style.display = 'none';
     }
+
+    // Beim Laden prüfen
     if (!localStorage.getItem('cookie_ok')) {
       document.getElementById('cookieBanner').style.display = 'block';
+    } else if (localStorage.getItem('cookie_analytics') === '1') {
+      loadGA();
     }
   </script>
 
