@@ -15,7 +15,7 @@ from news_scraper import collect_hits
 from content_generator import generate_post
 from html_assembler import assemble_draft
 from github_api import push_file
-from telegram_bot import send_draft_message
+from telegram_bot import send_draft_message, send_post_text
 from pending_state import write_pending
 
 
@@ -37,7 +37,11 @@ def main() -> None:
     print(f"\nPushe Draft auf main: {name} ...")
     push_file(name, Path(draft_path).read_bytes(), f"Draft-Vorschau: {post['title']}")
 
-    # Schritt 2: Telegram-Vorschau mit Approve/Reject-Buttons senden
+    # Schritt 2a: Volltext zum Korrekturlesen senden (reiner Text, ggf. gesplittet)
+    print("Sende Volltext zum Korrekturlesen ...")
+    send_post_text(post)
+
+    # Schritt 2b: Telegram-Vorschau mit Approve/Reject-Buttons senden
     print("Sende Telegram-Vorschau ...")
     result = send_draft_message(name, post["slug"], post["title"], post.get("meta_description", ""))
 

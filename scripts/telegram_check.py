@@ -63,7 +63,7 @@ def _do_reject(state: dict) -> None:
     Kein atomarer Multi-Datei-Bedarf — Reject entfernt nur eine Datei.
     """
     draft = state["draft_filename"]
-    print(f"  Reject: loesehe Draft '{draft}' ...")
+    print(f"  Reject: loesche Draft '{draft}' ...")
     delete_file(draft, "Draft verworfen")
     print(f"  Reject: Draft entfernt, nichts geht live.")
 

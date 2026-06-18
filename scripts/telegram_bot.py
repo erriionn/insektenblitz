@@ -127,6 +127,50 @@ def send_message(text: str) -> None:
         print(f"  send_message: HTTP {resp.status_code} - {data.get('description')} (kosmetisch, ignoriert).")
 
 
+def _split_text(text: str, limit: int = 4000) -> list:
+    """Teilt langen Text an Absatzgrenzen in Chunks <= limit (Telegram-Limit 4096)."""
+    if len(text) <= limit:
+        return [text]
+    chunks, cur = [], ""
+    for para in text.split("\n\n"):
+        # ponytail: ein einzelner Absatz > limit ist bei Blogposts unrealistisch;
+        # falls doch, geht er als ein (zu langer) Chunk raus -> Telegram lehnt nur den ab.
+        if cur and len(cur) + len(para) + 2 > limit:
+            chunks.append(cur)
+            cur = para
+        else:
+            cur = f"{cur}\n\n{para}" if cur else para
+    if cur:
+        chunks.append(cur)
+    return chunks
+
+
+def send_post_text(post: dict) -> None:
+    """Sendet den redaktionellen Volltext an TELEGRAM_CHAT_ID (Korrekturlesen).
+
+    Reiner Text (kein parse_mode/HTML -> keine Parse-Fehler): Titel + Intro +
+    Abschnitte (Ueberschrift + Body) + Highlight. Bei >4096 Zeichen auf mehrere
+    Nachrichten gesplittet. Tolerant via send_message (kein Token-Leak).
+    """
+    lines = [post.get("title", ""), ""]
+    intro = (post.get("intro") or "").strip()
+    if intro:
+        lines += [intro, ""]
+    highlight = (post.get("highlight") or "").strip()
+    for i, sec in enumerate(post.get("sections", [])):
+        heading = (sec.get("heading") or "").strip()
+        if heading:
+            lines += [f"=== {heading} ===", ""]
+        body = (sec.get("body") or "").strip()
+        if body:
+            lines += [body, ""]
+        if i == 0 and highlight:
+            lines += [f"WICHTIG: {highlight}", ""]
+    text = "\n".join(lines).strip()
+    for chunk in _split_text(text):
+        send_message(chunk)
+
+
 def get_updates(offset: int = 0) -> list:
     """Pollt getUpdates einmal und gibt Liste von Update-Objekten zurueck.
 
