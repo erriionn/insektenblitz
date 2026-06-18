@@ -146,15 +146,35 @@
     .nav-menu { position: fixed; top: 70px; left: 0; width: 80%; max-width: 300px; height: calc(100vh - 70px); background: white; z-index: 99; transform: translateX(-100%); transition: transform 0.3s ease; box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); overflow-y: auto; }
     .nav-menu.active { transform: translateX(0); }
     .nav-links { display: flex; flex-direction: column; gap: 0; list-style: none; padding: 20px 0; }
-    .nav-links li { border-bottom: 1px solid var(--border); }
+    .nav-links > li { border-bottom: 1px solid var(--border); }
     .nav-links a { display: block; padding: 16px 24px; font-size: 14px; font-weight: 600; color: var(--text-dark); transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; background: transparent; }
     .nav-links a:hover { background: var(--bg-light); color: var(--primary-green); }
-    @media (min-width: 768px) { 
+    /* Wissen Submenu */
+    .nav-sub-toggle { width: 100%; background: none; border: none; padding: 16px 24px; text-align: left; font-size: 14px; font-weight: 600; color: var(--text-dark); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 1px; font-family: var(--sans); }
+    .nav-sub-toggle:hover { background: var(--bg-light); color: var(--primary-green); }
+    .nav-sub-arrow { font-size: 10px; transition: transform 0.3s; }
+    .nav-has-sub.open .nav-sub-arrow { transform: rotate(180deg); }
+    .nav-sub { display: none; list-style: none; background: var(--bg-light); }
+    .nav-has-sub.open .nav-sub { display: block; }
+    .nav-sub li { border-top: 1px solid var(--border); }
+    .nav-sub a { padding: 13px 24px 13px 36px; font-size: 13px; color: var(--text-light); }
+    /* Kontakt-Eintrag im Menü */
+    .nav-kontakt-item a { background: var(--primary-green) !important; color: white !important; text-align: center; margin: 12px 16px; border-radius: var(--radius); padding: 14px 24px !important; }
+    .nav-kontakt-item a:hover { background: var(--primary-light) !important; }
+    @media (min-width: 768px) {
       .nav-menu { position: relative; transform: none; top: auto; width: auto; height: auto; max-width: none; background: none; box-shadow: none; }
-      .nav-links { display: flex; flex-direction: row; gap: 30px; padding: 0; }
-      .nav-links li { border-bottom: none; }
+      .nav-links { display: flex; flex-direction: row; gap: 30px; padding: 0; align-items: center; }
+      .nav-links > li { border-bottom: none; }
       .nav-links a { padding: 0; font-size: 12px; }
       .nav-links a:hover { background: none; }
+      .nav-sub-toggle { padding: 0; font-size: 12px; background: none; width: auto; gap: 4px; }
+      .nav-sub-toggle:hover { background: none; }
+      .nav-has-sub { position: relative; }
+      .nav-sub { position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: white; border-radius: var(--radius); box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 160px; z-index: 50; display: none; }
+      .nav-has-sub:hover .nav-sub { display: block; }
+      .nav-sub li { border-top: 1px solid var(--border); }
+      .nav-sub a { padding: 12px 20px; font-size: 12px; white-space: nowrap; color: var(--text-dark); }
+      .nav-kontakt-item { display: none; }
     }
     
     .nav-cta { display: none; gap: 15px; align-items: center; }
@@ -341,11 +361,19 @@
         <ul class="nav-links">
           <li><a href="#home">Home</a></li>
           <li><a href="#about">Über Uns</a></li>
-          <li><a href="#services">Schädlinge</a></li>
-          <li><a href="#alert">Gefahren</a></li>
-          <li><a href="#blog">Blog</a></li>
-          <li><a href="#faq">FAQ</a></li>
+          <li class="nav-has-sub">
+            <button class="nav-sub-toggle" aria-expanded="false" id="wissenToggle">
+              Wissen <span class="nav-sub-arrow">▾</span>
+            </button>
+            <ul class="nav-sub">
+              <li><a href="#services">Schädlinge</a></li>
+              <li><a href="#alert">Gefahren</a></li>
+              <li><a href="#blog">Blog</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ul>
+          </li>
           <li><a href="#pricing">Preise</a></li>
+          <li class="nav-kontakt-item"><a href="#kontakt">Kontakt anfragen</a></li>
         </ul>
       </div>
       
@@ -444,6 +472,12 @@
       </div>
     </div>
   </section>
+
+  <!-- ZWISCHEN-CTA 1 -->
+  <div style="background: var(--primary-green); padding: 20px; text-align: center;">
+    <p style="color: rgba(255,255,255,0.85); font-size: 13px; margin-bottom: 10px;">✅ Kostenlose Erstberatung &nbsp;·&nbsp; Reaktion in 24h &nbsp;·&nbsp; 99% weniger Pestizide</p>
+    <a href="#kontakt" class="btn btn-call" style="padding: 13px 28px; font-size: 14px;">Jetzt Beratung anfordern →</a>
+  </div>
 
   <!-- GEFÄHRDUNGS-ALERT -->
   <section class="section alert-section" id="alert">
@@ -726,6 +760,12 @@
     </div>
   </section>
 
+  <!-- ZWISCHEN-CTA 2 -->
+  <div style="background: var(--danger-red); padding: 20px; text-align: center;">
+    <p style="color: rgba(255,255,255,0.9); font-size: 13px; margin-bottom: 10px;">Befall entdeckt? Wir sind innerhalb von 48h vor Ort.</p>
+    <a href="#kontakt" class="btn" style="background: white; color: var(--danger-red); font-weight: 700; padding: 13px 28px; font-size: 14px;">Jetzt Anfrage stellen →</a>
+  </div>
+
   <!-- GANZJAHRESSCHUTZ -->
   <section class="section" style="background: white;" id="ganzjahresschutz">
     <div class="container">
@@ -842,6 +882,12 @@
       </div>
     </div>
   </section>
+
+  <!-- ZWISCHEN-CTA 3 -->
+  <div style="background: var(--primary-green); padding: 20px; text-align: center;">
+    <p style="color: rgba(255,255,255,0.85); font-size: 13px; margin-bottom: 10px;">Kein Nest gefunden = keine Rechnung. 30-Tage-Nachbehandlungsgarantie.</p>
+    <a href="#kontakt" class="btn btn-call" style="padding: 13px 28px; font-size: 14px;">Kostenlose Erstberatung →</a>
+  </div>
 
   <!-- FAQ SECTION -->
   <section class="section" style="background: white;" id="faq">
@@ -1719,7 +1765,19 @@
     navLinks.forEach(link => link.addEventListener('click', () => {
       hamburger.classList.remove('active');
       navMenu.classList.remove('active');
+      document.querySelector('.nav-has-sub')?.classList.remove('open');
     }));
+
+    // Wissen-Submenu Toggle (nur Mobile)
+    const wissenToggle = document.getElementById('wissenToggle');
+    if (wissenToggle) {
+      wissenToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const parent = wissenToggle.closest('.nav-has-sub');
+        const isOpen = parent.classList.toggle('open');
+        wissenToggle.setAttribute('aria-expanded', isOpen);
+      });
+    }
     document.addEventListener('click', (e) => {
       if (!e.target.closest('nav') && navMenu.classList.contains('active')) {
         hamburger.classList.remove('active');
