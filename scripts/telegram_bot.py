@@ -92,10 +92,15 @@ def send_draft_message(
     }
 
     resp = requests.post(url, json=payload, timeout=15)
-    resp.raise_for_status()
-    data = resp.json()
+    # Kein raise_for_status() hier: das wuerde die nackte HTTPError MIT der
+    # Token-URL werfen (Secret-Leak) und Telegrams Klartext-Grund verschlucken.
+    # Stattdessen den JSON-Body lesen und "description" ausgeben — ohne Token/URL.
+    try:
+        data = resp.json()
+    except ValueError:
+        sys.exit(f"Telegram API Fehler: HTTP {resp.status_code} (keine JSON-Antwort)")
     if not data.get("ok"):
-        sys.exit(f"Telegram API Fehler: {data.get('description')}")
+        sys.exit(f"Telegram API Fehler: HTTP {resp.status_code} — {data.get('description')}")
     return data["result"]
 
 
