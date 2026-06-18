@@ -104,6 +104,29 @@ def send_draft_message(
     return data["result"]
 
 
+def send_message(text: str) -> None:
+    """Sendet eine einfache Text-Nachricht an TELEGRAM_CHAT_ID (Status-Feedback).
+
+    Tolerant: ein fehlgeschlagenes Feedback darf den bereits erfolgten
+    Approve/Reject nicht nachtraeglich abbrechen. Robuster als
+    answerCallbackQuery, weil es nicht ablaeuft. Kein Token im Log.
+    """
+    token = _load_secret("TELEGRAM_BOT_TOKEN")
+    chat_id = _load_secret("TELEGRAM_CHAT_ID")
+    url = TELEGRAM_API.format(token=token, method="sendMessage")
+    try:
+        resp = requests.post(url, json={"chat_id": chat_id, "text": text}, timeout=10)
+    except requests.RequestException:
+        print("  send_message fehlgeschlagen (Netzwerkfehler) - kosmetisch, ignoriert.")
+        return
+    try:
+        data = resp.json()
+    except ValueError:
+        data = {}
+    if not data.get("ok"):
+        print(f"  send_message: HTTP {resp.status_code} - {data.get('description')} (kosmetisch, ignoriert).")
+
+
 def get_updates(offset: int = 0) -> list:
     """Pollt getUpdates einmal und gibt Liste von Update-Objekten zurueck.
 

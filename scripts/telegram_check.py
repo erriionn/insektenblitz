@@ -22,7 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # scripts/ importierbar machen
 
-from telegram_bot import get_updates, answer_callback_query, _load_secret
+from telegram_bot import get_updates, answer_callback_query, send_message, _load_secret
 from github_api import commit_files, delete_file, get_text_file
 from pending_state import read_pending, clear_pending
 from html_assembler import final_filename
@@ -109,9 +109,11 @@ def main() -> None:
         if data == approve_key:
             _do_approve(state)
             answer_callback_query(cq["id"], "Veroeffentlicht")
+            send_message(f"✅ Veroeffentlicht: {state['title']}")
         elif data == reject_key:
             _do_reject(state)
             answer_callback_query(cq["id"], "Verworfen")
+            send_message(f"\U0001f5d1 Verworfen: {state['title']}")
         else:
             # Anderer/alter Draft — ignorieren
             continue
