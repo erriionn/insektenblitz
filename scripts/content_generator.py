@@ -8,6 +8,7 @@ import json
 import os
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 import anthropic
@@ -56,6 +57,10 @@ def _clean(text: str, limit: int = 300) -> str:
 PROMPT = """Du bist SEO-Redakteur fuer insektenblitz.com, einen Drohnen-Bekaempfungsservice \
 gegen Eichenprozessionsspinner (EPS), Goldafter und Palmenzuensler.
 
+Heute ist der {today} (aktuelles Jahr: {year}). Schreibe aus heutiger Sicht. Verwende im \
+Titel und im Text NUR das aktuelle Jahr {year} oder gar keine Jahreszahl — niemals ein \
+vergangenes Jahr, auch wenn die Nachrichten-Anrisse aeltere Jahreszahlen nennen.
+
 Hier sind aktuelle Nachrichten-Anrisse zum Thema EPS:
 
 {sources_block}
@@ -100,6 +105,9 @@ POST_SCHEMA = {
 EVERGREEN_PROMPT = """Du bist SEO-Redakteur fuer insektenblitz.com, einen Drohnen-Bekaempfungsservice \
 gegen Eichenprozessionsspinner (EPS), Goldafter und Palmenzuensler.
 
+Heute ist der {today} (aktuelles Jahr: {year}). Schreibe aus heutiger Sicht; verwende nur das \
+aktuelle Jahr {year} oder gar keine Jahreszahl.
+
 Es liegen heute keine aktuellen Nachrichten vor. Schreibe einen zeitlosen Ratgeber-Blogpost \
 zum Thema: "{topic}".
 
@@ -120,13 +128,15 @@ def generate_post(hits: list[dict]) -> dict:
     if not hits:
         sys.exit("Keine verwertbaren Treffer fuer die Generierung.")
 
+    today_str = date.today().strftime("%d.%m.%Y")
+    year = date.today().year
     evergreen = bool(hits[0].get("evergreen"))
     if evergreen:
-        prompt = EVERGREEN_PROMPT.format(topic=hits[0]["title"])
+        prompt = EVERGREEN_PROMPT.format(topic=hits[0]["title"], today=today_str, year=year)
         sources = []  # keine echten Quellen -> HTML laesst den Block weg
     else:
         sources_block = "\n".join(f"- {h['title']}: {_clean(h.get('summary', ''))}" for h in hits)
-        prompt = PROMPT.format(sources_block=sources_block)
+        prompt = PROMPT.format(sources_block=sources_block, today=today_str, year=year)
         sources = [
             {"url": h["url"], "label": h.get("source_label") or h["url"]}
             for h in hits
