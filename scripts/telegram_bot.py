@@ -121,15 +121,19 @@ def get_updates(offset: int = 0) -> list:
     url = TELEGRAM_API.format(token=token, method="getUpdates")
     try:
         resp = requests.get(url, params={"offset": offset, "timeout": 1}, timeout=15)
-        resp.raise_for_status()
-        data = resp.json()
-        if not data.get("ok"):
-            print(f"  getUpdates: Telegram-Fehler: {data.get('description')}")
-            return []
-        return data.get("result", [])
-    except Exception as e:  # noqa: BLE001 — Polling-Fehler darf Lauf nicht abbrechen
-        print(f"  getUpdates fehlgeschlagen: {e}")
+    except requests.RequestException:
+        # Nie {e} ausgeben — die Exception-Meldung enthaelt die Token-URL (Leak).
+        print("  getUpdates fehlgeschlagen (Netzwerkfehler) — ignoriert.")
         return []
+    try:
+        data = resp.json()
+    except ValueError:
+        print(f"  getUpdates: HTTP {resp.status_code} (keine JSON-Antwort).")
+        return []
+    if not data.get("ok"):
+        print(f"  getUpdates: HTTP {resp.status_code} — {data.get('description')}")
+        return []
+    return data.get("result", [])
 
 
 def answer_callback_query(callback_query_id: str, text: str = "") -> None:
@@ -150,6 +154,14 @@ def answer_callback_query(callback_query_id: str, text: str = "") -> None:
             json={"callback_query_id": callback_query_id, "text": text},
             timeout=10,
         )
-        resp.raise_for_status()
-    except Exception as e:  # noqa: BLE001 — kosmetisch, kein Abbruch
-        print(f"  answerCallbackQuery fehlgeschlagen: {e}")
+    except requests.RequestException:
+        # Nie {e} ausgeben — die Exception-Meldung enthaelt die Token-URL (Leak).
+        print("  answerCallbackQuery fehlgeschlagen (Netzwerkfehler) — kosmetisch, ignoriert.")
+        return
+    try:
+        data = resp.json()
+    except ValueError:
+        data = {}
+    if not data.get("ok"):
+        # 400 "query is too old" ist im Polling-Betrieb normal (kosmetisch).
+        print(f"  answerCallbackQuery: HTTP {resp.status_code} — {data.get('description')} (kosmetisch, ignoriert).")
