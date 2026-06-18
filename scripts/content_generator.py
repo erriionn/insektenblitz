@@ -1,0 +1,159 @@
+"""Content-Generierung via Claude.
+
+Nimmt News-Treffer, laesst Claude einen vollstaendig umgeschriebenen deutschen
+Blogpost schreiben und gibt eine strukturierte dict-Form zurueck, die der
+html_assembler ins Template rendert.
+"""
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+import anthropic
+
+MODEL = "claude-sonnet-4-6"
+MAX_HITS = 5  # Skeleton: Top-Treffer; Plan 01-2 filtert/reduziert sauber vor.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def _load_api_key() -> str:
+    """ANTHROPIC_API_KEY: zuerst Umgebung, dann lokale .env. Klarer Abbruch wenn fehlt."""
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if key:
+        return key
+    env_file = REPO_ROOT / ".env"
+    if env_file.exists():
+        for raw in env_file.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if line.startswith("#") or "=" not in line:
+                continue
+            name, _, value = line.partition("=")
+            if name.strip() == "ANTHROPIC_API_KEY":
+                return value.strip().strip('"').strip("'")
+    sys.exit("ANTHROPIC_API_KEY fehlt — bitte in .env setzen (siehe .env.example).")
+
+
+def _slugify(title: str, max_len: int = 50) -> str:
+    s = title.lower()
+    for a, b in {"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss"}.items():
+        s = s.replace(a, b)
+    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
+    # Kappen am Wortende: callback_data "approve:{slug}" muss unter Telegrams
+    # 64-Byte-Limit bleiben (D-01); kurze Slugs sind auch bessere SEO-URLs.
+    if len(s) > max_len:
+        s = s[:max_len].rsplit("-", 1)[0]
+    return s or "eps-post"
+
+
+def _clean(text: str, limit: int = 300) -> str:
+    """HTML aus Google-News-Anrissen entfernen + kuerzen (fuer den Prompt)."""
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text[:limit]
+
+
+PROMPT = """Du bist SEO-Redakteur fuer insektenblitz.com, einen Drohnen-Bekaempfungsservice \
+gegen Eichenprozessionsspinner (EPS), Goldafter und Palmenzuensler.
+
+Hier sind aktuelle Nachrichten-Anrisse zum Thema EPS:
+
+{sources_block}
+
+Schreibe daraus EINEN deutschen Blogpost (600-900 Woerter) im sachlich-informativen, \
+familienorientierten Stil von insektenblitz.com. Ziel: Eltern/Anwohner informieren und \
+zur kostenlosen Erstberatung fuehren. Liefere 3-4 inhaltliche Abschnitte (sections) mit je \
+einer H2-Ueberschrift; mehrere Absaetze innerhalb eines Abschnitts mit Leerzeile (\\n\\n) trennen. \
+'tag' ist ein kurzes Label wie 'EPS-Wissen', 'meta_description' max ~155 Zeichen, 'highlight' \
+ein kurzer wichtiger Hinweis-Satz fuer eine hervorgehobene Box.
+
+WICHTIG (Rechtssicherheit): Schreibe alle Inhalte VOLLSTAENDIG in eigenen Worten um. \
+Zitiere KEINE Originaltexte. Keine Verleumdung von Firmen oder Personen."""
+
+# Erzwingt gueltige JSON-Struktur (Anthropic Structured Outputs) — kein fragiles Text-Parsen.
+POST_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "title": {"type": "string"},
+        "tag": {"type": "string"},
+        "meta_description": {"type": "string"},
+        "intro": {"type": "string"},
+        "sections": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "heading": {"type": "string"},
+                    "body": {"type": "string"},
+                },
+                "required": ["heading", "body"],
+                "additionalProperties": False,
+            },
+        },
+        "highlight": {"type": "string"},
+    },
+    "required": ["title", "tag", "meta_description", "intro", "sections", "highlight"],
+    "additionalProperties": False,
+}
+
+
+EVERGREEN_PROMPT = """Du bist SEO-Redakteur fuer insektenblitz.com, einen Drohnen-Bekaempfungsservice \
+gegen Eichenprozessionsspinner (EPS), Goldafter und Palmenzuensler.
+
+Es liegen heute keine aktuellen Nachrichten vor. Schreibe einen zeitlosen Ratgeber-Blogpost \
+zum Thema: "{topic}".
+
+600-900 Woerter, sachlich-informativer, familienorientierter Stil; Ziel: Eltern/Anwohner \
+informieren und zur kostenlosen Erstberatung fuehren. Liefere 3-4 inhaltliche Abschnitte \
+(sections) mit je einer H2-Ueberschrift; mehrere Absaetze mit Leerzeile (\\n\\n) trennen. \
+'tag' kurzes Label wie 'EPS-Ratgeber', 'meta_description' max ~155 Zeichen, 'highlight' ein \
+kurzer wichtiger Hinweis-Satz. Schreibe vollstaendig in eigenen Worten."""
+
+
+def generate_post(hits: list[dict]) -> dict:
+    """Treffer -> Post-dict (title, slug, tag, meta_description, intro, sections, highlight, sources).
+
+    `sources` ist eine Liste von {"url", "label"} (label = Medienname/Reddit). Bei Evergreen leer.
+    """
+    key = _load_api_key()
+    hits = [h for h in hits if h.get("title")][:MAX_HITS]
+    if not hits:
+        sys.exit("Keine verwertbaren Treffer fuer die Generierung.")
+
+    evergreen = bool(hits[0].get("evergreen"))
+    if evergreen:
+        prompt = EVERGREEN_PROMPT.format(topic=hits[0]["title"])
+        sources = []  # keine echten Quellen -> HTML laesst den Block weg
+    else:
+        sources_block = "\n".join(f"- {h['title']}: {_clean(h.get('summary', ''))}" for h in hits)
+        prompt = PROMPT.format(sources_block=sources_block)
+        sources = [
+            {"url": h["url"], "label": h.get("source_label") or h["url"]}
+            for h in hits
+            if h.get("url")
+        ]
+
+    client = anthropic.Anthropic(api_key=key)
+    msg = client.messages.create(
+        model=MODEL,
+        max_tokens=3000,
+        output_config={"format": {"type": "json_schema", "schema": POST_SCHEMA}},
+        messages=[{"role": "user", "content": prompt}],
+    )
+    # output_config erzwingt schema-gueltiges JSON -> kein Fence-Stripping/Repair noetig.
+    text = next(b.text for b in msg.content if b.type == "text")
+    post = json.loads(text)
+
+    post["slug"] = _slugify(post.get("title", ""))
+    post["sources"] = sources
+    return post
+
+
+if __name__ == "__main__":
+    from news_scraper import fetch_google_news
+
+    result = generate_post(fetch_google_news())
+    print("Titel:", result.get("title"))
+    print("Slug: ", result.get("slug"))
+    print("Sections:", len(result.get("sections", [])))
+    print("Quellen:", len(result.get("sources", [])))
