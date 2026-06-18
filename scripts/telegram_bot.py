@@ -8,6 +8,7 @@ Stellt Funktionen bereit:
 Secrets (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID) werden aus der Umgebung / .env geladen.
 Bot-Token erscheint nur in der URL, nie in print-Ausgaben oder Fehlermeldungen.
 """
+import html
 import os
 import sys
 from pathlib import Path
@@ -64,13 +65,16 @@ def send_draft_message(
     base = os.environ.get("SITE_BASE_URL", "https://insektenblitz.com").rstrip("/")
     preview_url = f"{base}/{draft_filename}"
 
+    # Claude-Ausgabe escapen: parse_mode=HTML wuerde sonst bei &, <, > im Titel
+    # oder Meta-Text mit 400 'can't parse entities' brechen (CR-01). Der Draft ist
+    # zu dem Zeitpunkt schon gepusht -> Abbruch hier hinterliesse einen verwaisten Draft.
     lines = [
-        f"<b>{title}</b>",
+        f"<b>{html.escape(title)}</b>",
         "",
         f"Vorschau: {preview_url}",
     ]
     if meta_desc:
-        lines += ["", meta_desc]
+        lines += ["", html.escape(meta_desc)]
 
     text = "\n".join(lines)
 
@@ -133,8 +137,14 @@ def _split_text(text: str, limit: int = 4000) -> list:
         return [text]
     chunks, cur = [], ""
     for para in text.split("\n\n"):
-        # ponytail: ein einzelner Absatz > limit ist bei Blogposts unrealistisch;
-        # falls doch, geht er als ein (zu langer) Chunk raus -> Telegram lehnt nur den ab.
+        # Ein einzelner Absatz > limit wird hart in limit-Stuecke geschnitten,
+        # damit nichts still verloren geht (WR-05).
+        while len(para) > limit:
+            if cur:
+                chunks.append(cur)
+                cur = ""
+            chunks.append(para[:limit])
+            para = para[limit:]
         if cur and len(cur) + len(para) + 2 > limit:
             chunks.append(cur)
             cur = para

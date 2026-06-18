@@ -151,7 +151,9 @@ def generate_post(hits: list[dict]) -> dict:
         messages=[{"role": "user", "content": prompt}],
     )
     # output_config erzwingt schema-gueltiges JSON -> kein Fence-Stripping/Repair noetig.
-    text = next(b.text for b in msg.content if b.type == "text")
+    text = next((b.text for b in msg.content if b.type == "text"), None)
+    if text is None:
+        sys.exit("Claude-Antwort enthielt keinen Text-Block — Generierung abgebrochen.")
     post = json.loads(text)
 
     post["slug"] = _slugify(post.get("title", ""))
