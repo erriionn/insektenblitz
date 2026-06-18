@@ -1,0 +1,199 @@
+"""GitHub-API Hilfsfunktionen fuer die Content-Maschine.
+
+Stellt drei Funktionen bereit:
+  - get_file_sha   : SHA einer bestehenden Datei auf main holen (oder None)
+  - push_file      : Single-File-Push via Contents-API (Draft-Vorschau)
+  - commit_files   : Atomarer Multi-Datei-Commit via Git Data API (Approve-Move)
+
+Alle Funktionen laden GH_PAT + GH_REPO aus der Umgebung / lokalen .env.
+HTTP-Fehler fuehren zu sys.exit (kritisch — kein stiller Teilzustand).
+Keine Secrets werden geloggt oder gedruckt.
+"""
+import base64
+import os
+import sys
+from pathlib import Path
+
+import requests
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def _load_secret(key_name: str) -> str:
+    """Laedt einen Secret-Wert: erst os.environ, dann .env-Datei, sonst sys.exit."""
+    val = os.environ.get(key_name)
+    if val:
+        return val
+    env_file = REPO_ROOT / ".env"
+    if env_file.exists():
+        for raw in env_file.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if line.startswith("#") or "=" not in line:
+                continue
+            name, _, value = line.partition("=")
+            if name.strip() == key_name:
+                return value.strip().strip('"').strip("'")
+    sys.exit(f"{key_name} fehlt — bitte in .env setzen (siehe .env.example).")
+
+
+def _get_headers(pat: str) -> dict:
+    """Gemeinsame GitHub-API-Header."""
+    return {
+        "Authorization": f"Bearer {pat}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+
+
+def get_file_sha(path: str) -> "str | None":
+    """SHA einer bestehenden Datei auf main zurueckgeben, oder None bei 404.
+
+    Args:
+        path: Pfad zur Datei relativ zum Repo-Root (z.B. "draft-2026-06-18.html").
+
+    Returns:
+        SHA-String oder None wenn Datei nicht existiert.
+    """
+    pat = _load_secret("GH_PAT")
+    repo = _load_secret("GH_REPO")
+    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    try:
+        resp = requests.get(
+            url,
+            headers=_get_headers(pat),
+            params={"ref": "main"},
+            timeout=20,
+        )
+        resp.raise_for_status()
+        return resp.json()["sha"]
+    except requests.HTTPError as e:
+        if e.response is not None and e.response.status_code == 404:
+            return None
+        sys.exit(f"GitHub API Fehler: {e.response.status_code} — {e.response.text[:200]}")
+
+
+def push_file(path: str, content_bytes: bytes, message: str) -> dict:
+    """Erstellt oder aktualisiert EINE Datei auf main via Contents-API.
+
+    Verwendet fuer den Draft-Vorschau-Push (Single-File). Bei Update wird der
+    aktuelle SHA automatisch geholt, damit GitHub kein Conflict zurueckgibt.
+
+    Args:
+        path:          Pfad relativ zum Repo-Root (z.B. "draft-2026-06-18.html").
+        content_bytes: Dateiinhalt als bytes.
+        message:       Commit-Nachricht.
+
+    Returns:
+        API-Antwort als dict.
+
+    Raises:
+        SystemExit bei HTTP-Fehler (kritisch — kein stiller Fehlschlag).
+    """
+    pat = _load_secret("GH_PAT")
+    repo = _load_secret("GH_REPO")
+    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+
+    payload: dict = {
+        "message": message,
+        "content": base64.b64encode(content_bytes).decode(),
+        "branch": "main",
+    }
+
+    existing_sha = get_file_sha(path)
+    if existing_sha is not None:
+        payload["sha"] = existing_sha
+
+    try:
+        resp = requests.put(url, headers=_get_headers(pat), json=payload, timeout=30)
+        resp.raise_for_status()
+    except requests.HTTPError as e:
+        sys.exit(f"GitHub API Fehler: {e.response.status_code} — {e.response.text[:200]}")
+
+    return resp.json()
+
+
+def commit_files(changes: list, message: str) -> None:
+    """Schreibt mehrere Datei-Aenderungen in EINEM Commit auf main via Git Data API.
+
+    Jeder Eintrag in changes ist ein dict mit:
+      - "path"    : str  — Pfad relativ zum Repo-Root
+      - "content" : bytes | str  — Dateiinhalt (add/update); FEHLT bei delete
+      - "delete"  : bool (optional) — True wenn die Datei entfernt werden soll
+
+    Die Git-Data-Sequenz:
+      1. GET .../git/ref/heads/main         -> aktuellen Commit-SHA
+      2. GET .../git/commits/{sha}          -> base-tree-SHA
+      3. POST .../git/trees                 -> neuer Tree-SHA
+      4. POST .../git/commits               -> neuer Commit-SHA
+      5. PATCH .../git/refs/heads/main      -> Ref auf neuen Commit setzen
+
+    Der Ref wird erst im letzten Schritt gesetzt -> kein Teilzustand auf main
+    wenn ein frueherer Schritt fehlschlaegt.
+
+    Args:
+        changes: Liste von Aenderungs-Dicts (s.o.).
+        message: Commit-Nachricht.
+
+    Raises:
+        SystemExit bei HTTP-Fehler in einem der Schritte.
+    """
+    pat = _load_secret("GH_PAT")
+    repo = _load_secret("GH_REPO")
+    base = f"https://api.github.com/repos/{repo}"
+    headers = _get_headers(pat)
+
+    def _call(method: str, url: str, **kwargs) -> dict:
+        try:
+            resp = requests.request(method, url, headers=headers, timeout=30, **kwargs)
+            resp.raise_for_status()
+        except requests.HTTPError as e:
+            sys.exit(f"GitHub API Fehler: {e.response.status_code} — {e.response.text[:200]}")
+        return resp.json()
+
+    # Schritt 1: aktuellen Commit-SHA von main holen
+    ref_data = _call("GET", f"{base}/git/ref/heads/main")
+    current_commit_sha = ref_data["object"]["sha"]
+
+    # Schritt 2: base-tree-SHA aus dem aktuellen Commit holen
+    commit_data = _call("GET", f"{base}/git/commits/{current_commit_sha}")
+    base_tree_sha = commit_data["tree"]["sha"]
+
+    # Schritt 3: neuen Tree bauen
+    tree_entries = []
+    for change in changes:
+        path = change["path"]
+        if change.get("delete"):
+            # Datei entfernen: sha=null im Tree
+            tree_entries.append({
+                "path": path,
+                "mode": "100644",
+                "type": "blob",
+                "sha": None,
+            })
+        else:
+            content = change["content"]
+            if isinstance(content, bytes):
+                content = content.decode("utf-8")
+            tree_entries.append({
+                "path": path,
+                "mode": "100644",
+                "type": "blob",
+                "content": content,
+            })
+
+    new_tree = _call("POST", f"{base}/git/trees", json={
+        "base_tree": base_tree_sha,
+        "tree": tree_entries,
+    })
+    new_tree_sha = new_tree["sha"]
+
+    # Schritt 4: neuen Commit erstellen
+    new_commit = _call("POST", f"{base}/git/commits", json={
+        "message": message,
+        "tree": new_tree_sha,
+        "parents": [current_commit_sha],
+    })
+    new_commit_sha = new_commit["sha"]
+
+    # Schritt 5: Ref auf neuen Commit setzen (erst jetzt ist der Commit sichtbar)
+    _call("PATCH", f"{base}/git/refs/heads/main", json={"sha": new_commit_sha})
