@@ -171,7 +171,8 @@
       .nav-sub-toggle:hover { background: none; }
       .nav-has-sub { position: relative; }
       .nav-sub { position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: white; border-radius: var(--radius); box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 160px; z-index: 50; display: none; }
-      .nav-has-sub:hover .nav-sub { display: block; }
+      .nav-has-sub:hover .nav-sub,
+      .nav-has-sub.open .nav-sub { display: block; }
       .nav-sub li { border-top: 1px solid var(--border); }
       .nav-sub a { padding: 12px 20px; font-size: 12px; white-space: nowrap; color: var(--text-dark); }
       .nav-kontakt-item { display: none; }
@@ -473,7 +474,7 @@
           Kinder drinnen. Hunde drinnen. Bienen, Schmetterlinge – alles eingenebelt.
         </p>
 
-        <blockquote style="border-left: 4px solid var(--safe-green); padding: 20px 28px; margin: 36px 0; background: var(--bg-light); border-radius: 0 8px 8px 0;">
+        <blockquote style="border-left: 4px solid var(--safe-green); padding: 20px 28px; margin: 36px 0; margin-left: 0; background: var(--bg-light); border-radius: 0 8px 8px 0;">
           <p style="font-size: 17px; font-style: italic; color: var(--text-dark); line-height: 1.8; margin: 0;">„Das kann nicht die Lösung sein."</p>
         </blockquote>
 
