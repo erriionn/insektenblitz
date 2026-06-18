@@ -197,3 +197,79 @@ def commit_files(changes: list, message: str) -> None:
 
     # Schritt 5: Ref auf neuen Commit setzen (erst jetzt ist der Commit sichtbar)
     _call("PATCH", f"{base}/git/refs/heads/main", json={"sha": new_commit_sha})
+
+
+def delete_file(path: str, message: str) -> "dict | None":
+    """Loescht EINE Datei auf main via Contents-API.
+
+    Idempotent: wenn die Datei nicht existiert (SHA == None), wird nichts getan.
+    Verwendet fuer den Reject-Pfad (D-06) — bewusst einfacher Single-File-Call,
+    kein atomarer Multi-Datei-Bedarf.
+
+    Args:
+        path:    Pfad relativ zum Repo-Root (z.B. "draft-2026-06-18.html").
+        message: Commit-Nachricht.
+
+    Returns:
+        API-Antwort als dict, oder None wenn Datei nicht existiert.
+
+    Raises:
+        SystemExit bei HTTP-Fehler (kritisch — kein stiller Fehlschlag).
+    """
+    pat = _load_secret("GH_PAT")
+    repo = _load_secret("GH_REPO")
+
+    sha = get_file_sha(path)
+    if sha is None:
+        print(f"  delete_file: '{path}' nicht gefunden — nichts zu loeschen.")
+        return None
+
+    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    payload = {
+        "message": message,
+        "sha": sha,
+        "branch": "main",
+    }
+
+    try:
+        resp = requests.delete(url, headers=_get_headers(pat), json=payload, timeout=30)
+        resp.raise_for_status()
+    except requests.HTTPError as e:
+        sys.exit(f"GitHub API Fehler: {e.response.status_code} — {e.response.text[:200]}")
+
+    return resp.json()
+
+
+def get_text_file(path: str) -> str:
+    """Liest den Inhalt einer Datei von main und gibt ihn als UTF-8-String zurueck.
+
+    Verwendet fuer den Approve-Move: Draft-Inhalt lesen, bevor er via
+    commit_files als blog-[slug].html geschrieben wird (D-05).
+
+    Args:
+        path: Pfad relativ zum Repo-Root (z.B. "draft-2026-06-18.html").
+
+    Returns:
+        Dateiinhalt als str (UTF-8).
+
+    Raises:
+        SystemExit wenn Datei nicht existiert (Approve auf nicht vorhandenen
+        Draft ist ein Fehler, kein toleranter Fall).
+    """
+    pat = _load_secret("GH_PAT")
+    repo = _load_secret("GH_REPO")
+    url = f"https://api.github.com/repos/{repo}/contents/{path}"
+
+    try:
+        resp = requests.get(
+            url,
+            headers=_get_headers(pat),
+            params={"ref": "main"},
+            timeout=20,
+        )
+        resp.raise_for_status()
+    except requests.HTTPError as e:
+        sys.exit(f"GitHub API Fehler: {e.response.status_code} — {e.response.text[:200]}")
+
+    content_b64 = resp.json()["content"]
+    return base64.b64decode(content_b64).decode("utf-8")
