@@ -108,18 +108,25 @@ def send_draft_message(
     return data["result"]
 
 
-def send_message(text: str) -> None:
+def send_message(text: str, parse_mode: str = "") -> None:
     """Sendet eine einfache Text-Nachricht an TELEGRAM_CHAT_ID (Status-Feedback).
 
     Tolerant: ein fehlgeschlagenes Feedback darf den bereits erfolgten
     Approve/Reject nicht nachtraeglich abbrechen. Robuster als
     answerCallbackQuery, weil es nicht ablaeuft. Kein Token im Log.
+
+    Args:
+        text:       Nachrichtentext (ggf. HTML-formatiert wenn parse_mode="HTML").
+        parse_mode: Optionaler Telegram-Parse-Modus (z.B. "HTML"). Leer = kein Modus.
     """
     token = _load_secret("TELEGRAM_BOT_TOKEN")
     chat_id = _load_secret("TELEGRAM_CHAT_ID")
     url = TELEGRAM_API.format(token=token, method="sendMessage")
+    payload: dict = {"chat_id": chat_id, "text": text}
+    if parse_mode:
+        payload["parse_mode"] = parse_mode
     try:
-        resp = requests.post(url, json={"chat_id": chat_id, "text": text}, timeout=10)
+        resp = requests.post(url, json=payload, timeout=10)
     except requests.RequestException:
         print("  send_message fehlgeschlagen (Netzwerkfehler) - kosmetisch, ignoriert.")
         return
