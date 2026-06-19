@@ -103,7 +103,7 @@ def _build_blog_card(slug: str, title: str, tag: str, hero_image: str, meta_desc
     ]
     monat_jahr = f"{monate_de[today.month - 1]} {today.year}"
     return (
-        f'\n        <!-- ARTIKEL: {html_lib.escape(title[:40])} -->\n'
+        f'\n        <!-- ARTIKEL-START: {html_lib.escape(title[:40])} -->\n'
         f'        <div style="background: white; border-radius: var(--radius); overflow: hidden; '
         f'box-shadow: 0 4px 14px rgba(0,0,0,0.08); transition: all 0.3s; display: flex; flex-direction: column;">\n'
         f'          <div style="position: relative;">\n'
@@ -122,7 +122,8 @@ def _build_blog_card(slug: str, title: str, tag: str, hero_image: str, meta_desc
         f'            <a href="blog-{html_lib.escape(slug)}.html" '
         f'style="color: var(--primary-green); font-weight: 700; font-size: 13px;">Artikel lesen &rarr;</a>\n'
         f'          </div>\n'
-        f'        </div>'
+        f'        </div>\n'
+        f'        <!-- ARTIKEL-END -->'
     )
 
 
@@ -158,7 +159,25 @@ def _build_index_card_in_html(slug: str, title: str, draft_content: str) -> str:
         return index_html
 
     # Neueste Karte als erste Karte einfuegen (count=1: nur erster Treffer, T-04-15)
-    return index_html.replace(GRID_ANCHOR, GRID_ANCHOR + card_html, 1)
+    index_html = index_html.replace(GRID_ANCHOR, GRID_ANCHOR + card_html, 1)
+
+    # Startseite begrenzen: nur die neuesten MAX_HOME_CARDS Auto-Posts behalten.
+    # Aeltere Auto-Karten werden von der Startseite entfernt — die Posts bleiben
+    # live erreichbar und in sitemap.xml, nur nicht mehr auf der Startseite.
+    # Maltes handgepflegte Karten haben kein ARTIKEL-START/END und bleiben unberuehrt.
+    # ponytail: Marker-Paar als Delimiter statt HTML-Parsing. Karten aus der Zeit
+    # vor diesem Feature (altes <!-- ARTIKEL: --> ohne END) zaehlen nicht mit.
+    MAX_HOME_CARDS = 6
+    blocks = list(_re.finditer(
+        r"\n        <!-- ARTIKEL-START:.*?<!-- ARTIKEL-END -->",
+        index_html, _re.DOTALL,
+    ))
+    # blocks sind in Dokumentreihenfolge = neueste -> aelteste (neueste wird oben
+    # eingefuegt). Alles ab Index MAX_HOME_CARDS ist zu alt; von hinten loeschen,
+    # damit die frueheren Match-Offsets gueltig bleiben.
+    for m in reversed(blocks[MAX_HOME_CARDS:]):
+        index_html = index_html[:m.start()] + index_html[m.end():]
+    return index_html
 
 
 # ---------------------------------------------------------------------------
