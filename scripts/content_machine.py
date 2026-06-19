@@ -6,12 +6,13 @@ Phase 2: collect_hits -> generate -> assemble_draft -> Draft via GitHub-API auf 
 Die Antwort-Auswertung (Approve/Reject) folgt in Plan 02 (telegram_check.py — Skript B).
 Aufruf:  python scripts/content_machine.py
 """
+import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # scripts/ importierbar machen
 
-from news_scraper import collect_hits
+from news_scraper import collect_hits, forced_evergreen_hit
 from content_generator import generate_post
 from html_assembler import assemble_draft
 from github_api import push_file
@@ -20,7 +21,14 @@ from pending_state import write_pending
 
 
 def main() -> None:
-    hits = collect_hits()
+    # Demo-Themensteuerung: workflow_dispatch-Input 'thema' (via env INPUT_THEMA)
+    # erzwingt ein Evergreen-Thema; leer = normaler aktueller News-Lauf.
+    thema = os.environ.get("INPUT_THEMA", "").strip()
+    if thema:
+        hits = forced_evergreen_hit(thema)
+        print("Erzwungenes Thema:", thema)
+    else:
+        hits = collect_hits()
     if hits and hits[0].get("evergreen"):
         print("Keine aktuellen Treffer — Evergreen-Thema:", hits[0]["title"])
     else:
