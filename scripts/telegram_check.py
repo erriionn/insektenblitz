@@ -9,6 +9,8 @@ Approve (D-05/PUB-01):
   Draft-Inhalt lesen + in EINEM atomaren Commit (commit_files):
     - blog-[slug].html hinzufuegen
     - draft-[datum].html entfernen
+    - sitemap.xml aktualisieren (D-04)
+    - index.html erste Blog-Karte einfuegen (D-05)
   -> genau ein Commit auf main, ein Netlify-Deploy, kein Teil-Zustand.
 
 Reject (D-06/PUB-02):
@@ -30,6 +32,136 @@ from telegram_bot import get_updates, answer_callback_query, send_message, _load
 from github_api import commit_files, delete_file, get_text_file
 from html_assembler import final_filename
 
+
+# ---------------------------------------------------------------------------
+# D-04: Sitemap-Update (defusedxml, XXE-sicher, T-04-14)
+# ---------------------------------------------------------------------------
+
+def _update_sitemap(slug: str, site_base_url: str) -> str:
+    """Liest sitemap.xml, fuegt neuen Post-Eintrag ein (Duplikat-sicher), gibt XML-String zurueck.
+
+    - Parst sitemap.xml per defusedxml.ElementTree (XXE/Billion-Laughs deaktiviert, T-04-14).
+    - Prueft ob loc fuer diesen Slug bereits existiert; falls ja: Originalinhalt unveraendert
+      zurueckgeben (kein Doppel-Eintrag).
+    - Sonst: neues <url>-Element mit loc/lastmod/changefreq/priority anhaengen.
+    - ET.indent() (Python 3.9+, CI nutzt 3.11) formatiert den Baum.
+    - Rueckgabe: serialisierter XML-String (utf-8, mit xml_declaration) — direkt als
+      commit_files-content verwendbar.
+    """
+    import defusedxml.ElementTree as dET
+    import xml.etree.ElementTree as ET
+    from datetime import date
+    from io import BytesIO
+
+    SITEMAP = Path(__file__).resolve().parent.parent / "sitemap.xml"
+    # defusedxml fuer sicheres Parsen (XXE/Billion-Laughs deaktiviert, T-04-14)
+    tree = dET.parse(str(SITEMAP))
+    root = tree.getroot()
+    ns = "http://www.sitemaps.org/schemas/sitemap/0.9"
+
+    new_url = f"{site_base_url.rstrip('/')}/blog-{slug}.html"
+    existing = [e.text for e in root.findall(f".//{{{ns}}}loc")]
+    if new_url in existing:
+        # Duplikat-Schutz: Sitemap bleibt unveraendert
+        return SITEMAP.read_text(encoding="utf-8")
+
+    # Mutation via stdlib ET (SubElement, indent, write) — XXE bereits beim Parse neutralisiert
+    url_el = ET.SubElement(root, f"{{{ns}}}url")
+    ET.SubElement(url_el, f"{{{ns}}}loc").text = new_url
+    ET.SubElement(url_el, f"{{{ns}}}lastmod").text = date.today().isoformat()
+    ET.SubElement(url_el, f"{{{ns}}}changefreq").text = "monthly"
+    ET.SubElement(url_el, f"{{{ns}}}priority").text = "0.8"
+
+    ET.indent(tree, space="  ")  # Python 3.9+; CI nutzt 3.11
+    buf = BytesIO()
+    tree.write(buf, xml_declaration=True, encoding="utf-8")
+    return buf.getvalue().decode("utf-8")
+
+
+# ---------------------------------------------------------------------------
+# D-05: Startseiten-Karte (T-04-15: alle dynamischen Felder via html.escape)
+# ---------------------------------------------------------------------------
+
+# Eindeutiger Anker im Blog-Grid (index.html Zeile 865, kommt genau einmal vor)
+GRID_ANCHOR = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 30px; margin-top: 50px;">'
+
+
+def _build_blog_card(slug: str, title: str, tag: str, hero_image: str, meta_desc: str) -> str:
+    """Erzeugt das Karten-HTML exakt nach dem kanonischen Muster (UI-SPEC 6.2/6.3).
+
+    Alle dynamischen Felder (title, tag, meta_desc, hero_image, slug) werden via
+    html.escape eingefuegt (T-04-15: Injection-Schutz).
+    """
+    import html as html_lib
+    from datetime import date
+    today = date.today()
+    monate_de = [
+        "Januar", "Februar", "März", "April", "Mai", "Juni",
+        "Juli", "August", "September", "Oktober", "November", "Dezember",
+    ]
+    monat_jahr = f"{monate_de[today.month - 1]} {today.year}"
+    return (
+        f'\n        <!-- ARTIKEL: {html_lib.escape(title[:40])} -->\n'
+        f'        <div style="background: white; border-radius: var(--radius); overflow: hidden; '
+        f'box-shadow: 0 4px 14px rgba(0,0,0,0.08); transition: all 0.3s; display: flex; flex-direction: column;">\n'
+        f'          <div style="position: relative;">\n'
+        f'            <img src="{html_lib.escape(hero_image)}" alt="{html_lib.escape(title)}" '
+        f'style="width: 100%; height: 200px; object-fit: cover; display: block;" loading="lazy" decoding="async">\n'
+        f'            <span style="position: absolute; top: 12px; left: 12px; background: var(--primary-green); '
+        f'color: white; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;">'
+        f'{html_lib.escape(tag)}</span>\n'
+        f'          </div>\n'
+        f'          <div style="padding: 22px; flex-grow: 1; display: flex; flex-direction: column;">\n'
+        f'            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">{monat_jahr}</p>\n'
+        f'            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); '
+        f'margin-bottom: 12px; line-height: 1.4;">{html_lib.escape(title)}</h3>\n'
+        f'            <p style="font-size: 14px; color: var(--text-light); line-height: 1.7; '
+        f'margin-bottom: 18px; flex-grow: 1;">{html_lib.escape(meta_desc)}</p>\n'
+        f'            <a href="blog-{html_lib.escape(slug)}.html" '
+        f'style="color: var(--primary-green); font-weight: 700; font-size: 13px;">Artikel lesen &rarr;</a>\n'
+        f'          </div>\n'
+        f'        </div>'
+    )
+
+
+def _build_index_card_in_html(slug: str, title: str, draft_content: str) -> str:
+    """Liest index.html von main, fuegt neue Blog-Karte als ERSTE Karte ein.
+
+    Metadaten (tag, hero_image, meta_desc) werden per Regex aus dem Draft-HTML extrahiert
+    (UI-SPEC 6.4). Insertion per str.replace(GRID_ANCHOR, GRID_ANCHOR + card, 1) — kein
+    Regex auf der HTML-Struktur, nur gezielter String-Replace am eindeutigen Anker (T-04-15).
+
+    Falls der Anker nicht gefunden wird: WARNUNG ausgeben + unveraendertes index_html
+    zurueckgeben (kein Crash).
+    """
+    import re as _re
+    import html as html_lib
+
+    index_html = get_text_file("index.html")
+
+    # Metadaten aus Draft-HTML extrahieren (UI-SPEC 6.4)
+    tag_m = _re.search(r'<span class="tag">(.*?)</span>', draft_content)
+    tag = html_lib.unescape(tag_m.group(1)) if tag_m else "EPS-Wissen"
+
+    hero_m = _re.search(r'<img class="hero-img" src="([^"]+)"', draft_content)
+    hero_image = hero_m.group(1) if hero_m else "images/blog-1-eiche.jpg"
+
+    desc_m = _re.search(r'<meta name="description" content="([^"]+)"', draft_content)
+    meta_desc = html_lib.unescape(desc_m.group(1)) if desc_m else ""
+
+    card_html = _build_blog_card(slug, title, tag, hero_image, meta_desc)
+
+    if GRID_ANCHOR not in index_html:
+        print("  WARNUNG: Blog-Grid-Anker nicht in index.html gefunden — Karte nicht eingefuegt.")
+        return index_html
+
+    # Neueste Karte als erste Karte einfuegen (count=1: nur erster Treffer, T-04-15)
+    return index_html.replace(GRID_ANCHOR, GRID_ANCHOR + card_html, 1)
+
+
+# ---------------------------------------------------------------------------
+# Core approve/reject logic
+# ---------------------------------------------------------------------------
 
 def _do_approve(state: dict) -> str:
     """Approve-Pfad (D-05 + D-03 + D-09): Draft -> blog-[slug].html in EINEM atomaren Commit.
@@ -68,17 +200,28 @@ def _do_approve(state: dict) -> str:
         1,  # maxreplace=1 — nur den ersten Treffer (genau ein robots-Tag pro Seite)
     )
 
-    print(f"  Approve: atomarer Commit ({draft} -> {final}) ...")
+    # D-04: Sitemap mit neuem Post-Eintrag (Duplikat-sicher, defusedxml, T-04-14)
+    site_url = _load_secret("SITE_BASE_URL")
+    sitemap_content = _update_sitemap(slug, site_url)
+
+    # D-05: Startseiten-Karte als erste Karte in index.html (T-04-15)
+    index_content = _build_index_card_in_html(slug, title, content)
+
+    print(f"  Approve: atomarer Commit ({draft} -> {final} + sitemap + index) ...")
     commit_files(
         [
-            # Finalen Post hinzufuegen / aktualisieren
+            # Finalen Post hinzufuegen / aktualisieren (robots bereits index,follow)
             {"path": final, "content": content},
             # Draft entfernen (sha=None im Tree -> Datei geloescht)
             {"path": draft, "delete": True},
+            # D-04: Sitemap-Eintrag fuer neuen Post
+            {"path": "sitemap.xml", "content": sitemap_content},
+            # D-05: Neue Blog-Karte als erste Karte auf der Startseite
+            {"path": "index.html", "content": index_content},
         ],
         f"Blogpost veroeffentlicht: {title}",
     )
-    print(f"  Approve: '{final}' ist live, Draft entfernt.")
+    print(f"  Approve: '{final}' ist live, Draft entfernt, Sitemap + Startseite aktualisiert.")
     return title
 
 
