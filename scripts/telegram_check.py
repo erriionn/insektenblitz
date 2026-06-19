@@ -88,7 +88,7 @@ def _update_sitemap(slug: str, site_base_url: str) -> str:
 GRID_ANCHOR = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 30px; margin-top: 50px;">'
 
 
-def _build_blog_card(slug: str, title: str, tag: str, hero_image: str, meta_desc: str) -> str:
+def _build_blog_card(slug: str, title: str, tag: str, hero_image: str, meta_desc: str, read_min: "str | None" = None) -> str:
     """Erzeugt das Karten-HTML exakt nach dem kanonischen Muster (UI-SPEC 6.2/6.3).
 
     Alle dynamischen Felder (title, tag, meta_desc, hero_image, slug) werden via
@@ -102,6 +102,10 @@ def _build_blog_card(slug: str, title: str, tag: str, hero_image: str, meta_desc
         "Juli", "August", "September", "Oktober", "November", "Dezember",
     ]
     monat_jahr = f"{monate_de[today.month - 1]} {today.year}"
+    # Lesezeit-Suffix wie in Maltes Karten-Schema ("Mai 2025 · 5 Min Lesezeit").
+    # read_min kommt beim Approve aus der bestehenden Artikel-Meta-Zeile (gleiche
+    # Quelle wie die Artikelseite -> identische Zahl); nur Ziffern, kein Injection-Risiko.
+    meta_zeile = monat_jahr if not read_min else f"{monat_jahr} · {read_min} Min Lesezeit"
     return (
         f'\n        <!-- ARTIKEL-START: {html_lib.escape(title[:40])} -->\n'
         f'        <div style="background: white; border-radius: var(--radius); overflow: hidden; '
@@ -114,7 +118,7 @@ def _build_blog_card(slug: str, title: str, tag: str, hero_image: str, meta_desc
         f'{html_lib.escape(tag)}</span>\n'
         f'          </div>\n'
         f'          <div style="padding: 22px; flex-grow: 1; display: flex; flex-direction: column;">\n'
-        f'            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">{monat_jahr}</p>\n'
+        f'            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">{meta_zeile}</p>\n'
         f'            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); '
         f'margin-bottom: 12px; line-height: 1.4;">{html_lib.escape(title)}</h3>\n'
         f'            <p style="font-size: 14px; color: var(--text-light); line-height: 1.7; '
@@ -152,7 +156,12 @@ def _build_index_card_in_html(slug: str, title: str, draft_content: str) -> str:
     desc_m = _re.search(r'<meta name="description" content="([^"]+)"', draft_content)
     meta_desc = html_lib.unescape(desc_m.group(1)) if desc_m else ""
 
-    card_html = _build_blog_card(slug, title, tag, hero_image, meta_desc)
+    # Lesezeit aus der bereits gerenderten Artikel-Meta-Zeile ziehen (html_assembler
+    # schreibt "... &middot; N Minuten Lesezeit &middot; ...") -> Karte zeigt dieselbe Zahl.
+    read_m = _re.search(r"(\d+)\s*Minuten Lesezeit", draft_content)
+    read_min = read_m.group(1) if read_m else None
+
+    card_html = _build_blog_card(slug, title, tag, hero_image, meta_desc, read_min)
 
     if GRID_ANCHOR not in index_html:
         print("  WARNUNG: Blog-Grid-Anker nicht in index.html gefunden — Karte nicht eingefuegt.")
