@@ -38,6 +38,17 @@ def main() -> None:
         post = generate_post(hits)
         print(f"  Titel: {post.get('title')}")
 
+        # Pre-flight: callback_data "approve:{slug}" und "reject:{slug}" muessen
+        # <= 64 Byte (UTF-8) bleiben — sonst lehnt Telegram den Button still ab.
+        # _slugify kappt auf 50 Z. (= 58 Byte mit "approve:"); der Check faengt
+        # Randfaelle ab, in denen ein Kollisions-Suffix die Grenze ueberschreitet.
+        slug = post["slug"]
+        for prefix in ("approve:", "reject:"):
+            if len((prefix + slug).encode("utf-8")) > 64:
+                sys.exit(
+                    f"Slug zu lang fuer Telegram callback_data (>64 Byte): {slug}"
+                )
+
         hero_image = resolve_hero(post.get("hero_keyword", ""))
         draft_path = assemble_draft(post, hero_image=hero_image)
         name = Path(draft_path).name  # "draft-YYYY-MM-DD.html"
