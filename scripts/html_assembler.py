@@ -20,6 +20,47 @@ _MONTHS_DE = [
     "Juli", "August", "September", "Oktober", "November", "Dezember",
 ]
 
+HERO_MAP = {
+    "eiche":         "images/blog-1-eiche.jpg",
+    "wald":          "images/blog-1-eiche.jpg",
+    "baum":          "images/blog-1-eiche.jpg",
+    "saison":        "images/blog-1-eiche.jpg",
+    "standard":      "images/blog-1-eiche.jpg",
+    "familie":       "images/blog-2-familie.jpg",
+    "kinder":        "images/blog-2-familie.jpg",
+    "garten":        "images/blog-2-familie.jpg",
+    "haustiere":     "images/blog-2-familie.jpg",
+    "hund":          "images/alert-haustiere.jpg",
+    "katze":         "images/alert-haustiere.jpg",
+    "tier":          "images/alert-haustiere.jpg",
+    "kind":          "images/alert-kinder.jpg",
+    "schule":        "images/alert-kinder.jpg",
+    "spielplatz":    "images/alert-kinder.jpg",
+    "kindergarten":  "images/hero-kindergarten.jpg",
+    "kita":          "images/hero-kindergarten.jpg",
+    "mallorca":      "images/blog-3-mallorca.jpg",
+    "palme":         "images/blog-3-mallorca.jpg",
+    "palmenzuensler": "images/blog-3-mallorca.jpg",
+    "buero":         "images/blog-4-buero.jpg",
+    "gewerbe":       "images/blog-4-buero.jpg",
+    "betrieb":       "images/blog-4-buero.jpg",
+    "arbeitsschutz": "images/blog-4-buero.jpg",
+    "office":        "images/hero-office.jpg",
+    "firma":         "images/hero-office.jpg",
+    "drohne":        "images/hero-drohne-wald.jpg",
+    "inspektion":    "images/hero-drohne-wald.jpg",
+    "umwelt":        "images/alert-umwelt.jpg",
+    "natur":         "images/alert-umwelt.jpg",
+    "finca":         "images/hero-eps-finka.jpg",
+    "urlaub":        "images/hero-eps-finka.jpg",
+}
+DEFAULT_HERO = "images/blog-1-eiche.jpg"
+
+
+def resolve_hero(keyword: str) -> str:
+    """Mappt POST_SCHEMA-hero_keyword auf vorhandene images/-Assets."""
+    return HERO_MAP.get((keyword or "").lower().strip(), DEFAULT_HERO)
+
 
 def _extract(pattern: str, text: str, what: str) -> str:
     m = re.search(pattern, text, re.S)
@@ -106,7 +147,7 @@ def assemble_draft(post: dict, hero_image: str = "images/blog-1-eiche.jpg") -> s
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{title} – Insektenblitz</title>
   <meta name="description" content="{desc}" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" href="images/logo-insektenblitz.svg" type="image/svg+xml" />
   <meta property="og:title" content="{title}" />
   <meta property="og:description" content="{desc}" />
