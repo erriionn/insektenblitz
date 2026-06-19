@@ -1,4 +1,4 @@
-"""HTML-Assembly: Post-dict -> draft-[datum].html im Layout von blog-eps-saison.html.
+"""HTML-Assembly: Post-dict -> draft-[datum].html im Layout von blog-eps-buerogebaeude.html.
 
 Style, Nav, CTA-Box und Footer werden zur Laufzeit DIREKT aus dem Template
 extrahiert -> garantiert 1:1 identische Optik (HTML-01). Schema.org BlogPosting
@@ -12,7 +12,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE_FILE = REPO_ROOT / "blog-eps-saison.html"
+TEMPLATE_FILE = REPO_ROOT / "blog-eps-buerogebaeude.html"
 DOMAIN = "https://insektenblitz.com"
 
 _MONTHS_DE = [
@@ -65,7 +65,7 @@ def resolve_hero(keyword: str) -> str:
 def _extract(pattern: str, text: str, what: str) -> str:
     m = re.search(pattern, text, re.S)
     if not m:
-        sys.exit(f"Template-Block '{what}' nicht in blog-eps-saison.html gefunden.")
+        sys.exit(f"Template-Block '{what}' nicht in blog-eps-buerogebaeude.html gefunden.")
     return m.group(0)
 
 
