@@ -12,6 +12,7 @@ from datetime import date
 from pathlib import Path
 
 import anthropic
+from github_api import get_file_sha
 
 MODEL = "claude-sonnet-4-6"
 MAX_HITS = 5  # Skeleton: Top-Treffer; Plan 01-2 filtert/reduziert sauber vor.
@@ -45,6 +46,24 @@ def _slugify(title: str, max_len: int = 50) -> str:
     if len(s) > max_len:
         s = s[:max_len].rsplit("-", 1)[0]
     return s or "eps-post"
+
+
+def _unique_slug(base: str) -> str:
+    """Stellt sicher, dass blog-{slug}.html auf main noch nicht existiert.
+
+    Haengt bei Kollision die Suffixe -2, -3, ... an, bis ein freier Slug
+    gefunden ist. Obergrenze 20 Versuche; danach Datums-Suffix als Notanker
+    (verhindert Endlosschleife).
+    """
+    if get_file_sha(f"blog-{base}.html") is None:
+        return base
+    for n in range(2, 22):
+        candidate = f"{base}-{n}"
+        if get_file_sha(f"blog-{candidate}.html") is None:
+            return candidate
+    # Notanker: YYYYMMDD-Suffix (sollte nie gebraucht werden)
+    from datetime import date as _date
+    return f"{base}-{_date.today().strftime('%Y%m%d')}"
 
 
 def _clean(text: str, limit: int = 300) -> str:
@@ -169,7 +188,7 @@ def generate_post(hits: list[dict]) -> dict:
         sys.exit("Claude-Antwort enthielt keinen Text-Block — Generierung abgebrochen.")
     post = json.loads(text)
 
-    post["slug"] = _slugify(post.get("title", ""))
+    post["slug"] = _unique_slug(_slugify(post.get("title", "")))
     post["sources"] = sources
     return post
 
