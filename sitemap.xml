@@ -48,4 +48,10 @@
     <ns0:changefreq>monthly</ns0:changefreq>
     <ns0:priority>0.8</ns0:priority>
   </ns0:url>
+  <ns0:url>
+    <ns0:loc>https://insektenblitz.pages.dev/blog-eichenprozessionsspinner-2026-warum-spielplaetze.html</ns0:loc>
+    <ns0:lastmod>2026-06-19</ns0:lastmod>
+    <ns0:changefreq>monthly</ns0:changefreq>
+    <ns0:priority>0.8</ns0:priority>
+  </ns0:url>
 </ns0:urlset>
