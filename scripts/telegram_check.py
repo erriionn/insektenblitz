@@ -22,7 +22,9 @@ wird verarbeitet — fremde Klicks werden ignoriert.
 Aufruf:  python scripts/telegram_check.py
 """
 import html
+import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -278,7 +280,31 @@ def main() -> None:
         update_id = upd["update_id"]
         cq = upd.get("callback_query")
         if not cq:
-            # Nicht-Callback (z.B. Text): bestaetigen und ueberspringen.
+            msg = upd.get("message", {})
+            msg_text = (msg.get("text") or "").strip()
+            if msg_text.startswith("/neuerpost"):
+                # Sicherheits-Filter (T-04-17): nur eigene Chat-ID darf kostenpflichtige
+                # Generierung ausloesen — fremde Befehle werden still verworfen.
+                msg_chat = str(msg.get("chat", {}).get("id", ""))
+                msg_from = str(msg.get("from", {}).get("id", ""))
+                if own_chat_id not in (msg_chat, msg_from):
+                    print("  Fremder /neuerpost — ignoriert (T-04-17).")
+                    get_updates(offset=update_id + 1)
+                    continue
+                # Optionales Thema: "/neuerpost Goldafter" -> thema = "Goldafter"
+                parts = msg_text.split(None, 1)
+                thema = parts[1].strip() if len(parts) > 1 else ""
+                # content_machine als Subprocess (T-04-18: kein shell=True -> keine Injection)
+                env = {**os.environ, "INPUT_THEMA": thema}
+                subprocess.run(
+                    [sys.executable, str(Path(__file__).resolve().parent / "content_machine.py")],
+                    env=env,
+                    check=True,
+                )
+                send_message(f"Generierungslauf gestartet (Thema: {thema or 'aktuell'})...")
+                get_updates(offset=update_id + 1)  # Offset bestaetigen — keine Doppelverarbeitung
+                return
+            # Kein bekannter Befehl: bestaetigen und ueberspringen.
             get_updates(offset=update_id + 1)
             continue
 
