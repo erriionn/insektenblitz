@@ -27,4 +27,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+          # Noetig fuer /neuerpost: telegram_check startet dann content_machine,
+          # das den KI-Schluessel zur Generierung braucht.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scripts/telegram_check.py
