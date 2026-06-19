@@ -97,3 +97,28 @@ verwendet, aber mit **Maltes eigenen Werten**:
 
 Die Namen bleiben gleich — nur die hinterlegten Werte ändern sich. Danach läuft das
 System vollständig auf Maltes Seite, ohne Erion.
+
+---
+
+## Bekanntes Backlog (nach Deadline)
+
+Die folgenden drei Punkte wurden im Audit (D-15) als bewusst auf nach den
+Festpreis-Liefertermin verschoben erfasst. Sie verbessern die Langzeit-Wartbarkeit,
+sind aber nicht nötig, damit das System zuverlässig läuft.
+
+**1. Automatisierte Test-Suite (pytest)**
+CONCERNS markiert fehlende Tests als HIGH-Risiko. Eine pytest-Suite würde künftige
+Änderungen absichern und Regressionen früh erkennen. Empfehlung nach der Deadline:
+Unit-Tests für die kritischen Pfade (Slug-Erstellung, Evergreen-Fallback, Approve-Logik).
+
+**2. Strukturiertes Logging**
+Alle Statusausgaben laufen aktuell über `print()`. Für Produktionsbetrieb wäre
+`logging` (Python-Standardbibliothek) besser: einstellbare Log-Level, Timestamps,
+einfacheres Durchsuchen der GitHub-Actions-Logs.
+
+**3. Externes Uptime-Monitoring**
+Der tägliche Health-Ping (Telegram-Nachricht bei jedem Lauf) zeigt an, ob der
+daily-content-Lauf erfolgreich war. Ein zusätzlicher externer Dienst wie
+Healthchecks.io oder UptimeRobot würde stille Ausfälle erkennen (z. B. wenn
+GitHub Actions den Cron-Lauf überspringt). Kostenlos verfügbar für diesen
+Anwendungsfall.

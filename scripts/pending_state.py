@@ -1,11 +1,12 @@
 """Lesen und Schreiben des Pending-State (.telegram-pending.json).
 
-State-Felder (D-08):
+State-Felder (D-08, bereinigt D-14):
   - draft_filename : str   — Dateiname des Drafts (z.B. "draft-2026-06-18.html")
   - slug           : str   — URL-Slug des Posts
   - title          : str   — Titel des Posts
-  - message_id     : int   — Telegram message_id der gesendeten Vorschau-Nachricht
-  - offset         : int   — letzter getUpdates-Offset (Doppelverarbeitung verhindern)
+
+Entfernt (D-14): message_id und offset waren nie von telegram_check.py gelesen
+(der Check ist state-frei und arbeitet direkt mit dem Repo + callback_data).
 
 Die Datei liegt im Repo-Root und ist via .gitignore ignoriert (nie ins oeffentliche Repo).
 """
@@ -15,15 +16,14 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 STATE_FILE = REPO_ROOT / ".telegram-pending.json"
-_REQUIRED_FIELDS = ("draft_filename", "slug", "title", "message_id", "offset")
+_REQUIRED_FIELDS = ("draft_filename", "slug", "title")
 
 
 def write_pending(state: dict) -> None:
     """Schreibt den Pending-State in .telegram-pending.json.
 
     Args:
-        state: Dict mit den D-08-Feldern (draft_filename, slug, title,
-               message_id, offset).
+        state: Dict mit den D-08-Feldern (draft_filename, slug, title).
     """
     # Atomar schreiben (Temp + os.replace): ein Abbruch hinterlaesst nie eine
     # halb geschriebene/korrupte State-Datei (WR-06).

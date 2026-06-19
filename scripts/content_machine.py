@@ -64,21 +64,21 @@ def main() -> None:
 
         # Schritt 2b: Telegram-Vorschau mit Approve/Reject-Buttons senden
         print("Sende Telegram-Vorschau ...")
-        result = send_draft_message(name, post["slug"], post["title"], post.get("meta_description", ""))
+        send_draft_message(name, post["slug"], post["title"], post.get("meta_description", ""))
 
         # Schritt 3: Pending-State fuer Skript B (telegram_check.py) speichern
+        # message_id und offset entfernt (D-14): telegram_check.py ist state-frei
+        # und liest read_pending nie — die Felder waren tot (CONCERNS).
         write_pending({
             "draft_filename": name,
             "slug": post["slug"],
             "title": post["title"],
-            "message_id": result["message_id"],
-            "offset": 0,
         })
 
         print("\nDraft gepusht + Telegram gesendet.")
         print(f"  Titel:    {post['title']}")
         print(f"  Draft:    {name}")
-        print(f"  Pending:  .telegram-pending.json (message_id={result['message_id']})")
+        print("  Pending:  .telegram-pending.json")
         print("\nNaechster Schritt: python scripts/telegram_check.py (Plan 02) ausfuehren,")
         print("um die Antwort auszuwerten (Approve -> live / Reject -> loeschen).")
 
