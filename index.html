@@ -7,7 +7,7 @@
   <meta name="description" content="KI-gestützte Drohnen-Nestbekämpfung gegen Eichenprozessionsspinner (EPS), Goldafter & Palmenzünsler – auch auf Mallorca. Biologisch, präzise, 99% weniger Pestizide. Sicher für Kinder & Haustiere. Kostenlose Erstberatung." />
   <meta name="keywords" content="Eichenprozessionsspinner bekämpfen, EPS Nest entfernen, Drohnen Schädlingsbekämpfung, Goldafter Bekämpfung, Palmenzünsler Mallorca, biologische Schädlingsbekämpfung, KI Drohnen Nesterlokalisation, pestizidfrei, sicher für Kinder Haustiere, Schädlingsbekämpfung Deutschland" />
   <meta name="robots" content="index, follow" />
-  <meta name="google-site-verification" content="google049f51a2d7f9ba92" />
+  <meta name="google-site-verification" content="ngXnaGcnEFC4cANfBJbrMx7YBUAoXjMURo7c4Se6mVc" />
 
   <!-- Google Consent Mode v2 – muss VOR GTM stehen -->
   <script>
@@ -130,9 +130,9 @@
     .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 100%; width: 100%; }
     
     /* Logo */
-    .nav-logo { font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--primary-green); display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-logo strong { font-weight: 800; color: #d4a000; }
-    .nav-logo-img { width: 40px; height: 40px; flex-shrink: 0; }
+    .nav-logo { font-family: var(--sans); font-size: 19px; font-weight: 800; letter-spacing: -0.5px; text-transform: lowercase; color: var(--primary-green); display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo strong { font-weight: 800; color: #E98932; }
+    .nav-logo-img { width: 44px; height: 44px; flex-shrink: 0; }
     
     /* Hamburger Menu */
     .hamburger { display: flex; flex-direction: column; gap: 6px; cursor: pointer; background: none; border: none; padding: 8px; margin-right: -8px; }
@@ -146,15 +146,36 @@
     .nav-menu { position: fixed; top: 70px; left: 0; width: 80%; max-width: 300px; height: calc(100vh - 70px); background: white; z-index: 99; transform: translateX(-100%); transition: transform 0.3s ease; box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); overflow-y: auto; }
     .nav-menu.active { transform: translateX(0); }
     .nav-links { display: flex; flex-direction: column; gap: 0; list-style: none; padding: 20px 0; }
-    .nav-links li { border-bottom: 1px solid var(--border); }
+    .nav-links > li { border-bottom: 1px solid var(--border); }
     .nav-links a { display: block; padding: 16px 24px; font-size: 14px; font-weight: 600; color: var(--text-dark); transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; background: transparent; }
     .nav-links a:hover { background: var(--bg-light); color: var(--primary-green); }
-    @media (min-width: 768px) { 
+    /* Wissen Submenu */
+    .nav-sub-toggle { width: 100%; background: none; border: none; padding: 16px 24px; text-align: left; font-size: 14px; font-weight: 600; color: var(--text-dark); cursor: pointer; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; letter-spacing: 1px; font-family: var(--sans); }
+    .nav-sub-toggle:hover { background: var(--bg-light); color: var(--primary-green); }
+    .nav-sub-arrow { font-size: 10px; transition: transform 0.3s; }
+    .nav-has-sub.open .nav-sub-arrow { transform: rotate(180deg); }
+    .nav-sub { display: none; list-style: none; background: var(--bg-light); }
+    .nav-has-sub.open .nav-sub { display: block; }
+    .nav-sub li { border-top: 1px solid var(--border); }
+    .nav-sub a { padding: 13px 24px 13px 36px; font-size: 13px; color: var(--text-light); }
+    /* Kontakt-Eintrag im Menü */
+    .nav-kontakt-item a { background: var(--primary-green) !important; color: white !important; text-align: center; margin: 12px 16px; border-radius: var(--radius); padding: 14px 24px !important; }
+    .nav-kontakt-item a:hover { background: var(--primary-light) !important; }
+    @media (min-width: 768px) {
       .nav-menu { position: relative; transform: none; top: auto; width: auto; height: auto; max-width: none; background: none; box-shadow: none; }
-      .nav-links { display: flex; flex-direction: row; gap: 30px; padding: 0; }
-      .nav-links li { border-bottom: none; }
+      .nav-links { display: flex; flex-direction: row; gap: 30px; padding: 0; align-items: center; }
+      .nav-links > li { border-bottom: none; }
       .nav-links a { padding: 0; font-size: 12px; }
       .nav-links a:hover { background: none; }
+      .nav-sub-toggle { padding: 0; font-size: 12px; background: none; width: auto; gap: 4px; }
+      .nav-sub-toggle:hover { background: none; }
+      .nav-has-sub { position: relative; }
+      .nav-sub { position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: white; border-radius: var(--radius); box-shadow: 0 8px 24px rgba(0,0,0,0.12); min-width: 160px; z-index: 50; display: none; }
+      .nav-has-sub:hover .nav-sub,
+      .nav-has-sub.open .nav-sub { display: block; }
+      .nav-sub li { border-top: 1px solid var(--border); }
+      .nav-sub a { padding: 12px 20px; font-size: 12px; white-space: nowrap; color: var(--text-dark); }
+      .nav-kontakt-item { display: none; }
     }
     
     .nav-cta { display: none; gap: 15px; align-items: center; }
@@ -181,12 +202,29 @@
     @media (max-width: 767px) { .section { padding: 60px 0; } }
 
 
-    .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; padding-top: 70px; background: linear-gradient(135deg, #1d5a3d 0%, #2d8659 55%, #1a5035 100%); }
+    /* HERO SLIDER */
+    .hero-slider { position: relative; height: 100svh; min-height: 500px; overflow: hidden; }
+    @supports not (height: 100svh) { .hero-slider { height: 100vh; } }
+    .hero-slide { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center center; opacity: 0; transition: opacity 0.9s ease; pointer-events: none; padding-top: 70px; }
+    .hero-slide.active { opacity: 1; pointer-events: auto; }
     .hero-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(29, 90, 61, 0.65), rgba(45, 134, 89, 0.4)); z-index: 2; }
     .hero-content { position: relative; z-index: 3; text-align: center; color: white; max-width: 800px; padding: 20px; }
-    .hero-content h1 { font-family: var(--serif); font-size: clamp(32px, 8vw, 56px); font-weight: 700; margin-bottom: 20px; line-height: 1.1; text-transform: uppercase; letter-spacing: 1px; }
-    .hero-content p { font-size: clamp(16px, 4vw, 22px); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+    .hero-content h1 { font-family: var(--serif); font-size: clamp(26px, 5.5vw, 56px); font-weight: 700; margin-bottom: 16px; line-height: 1.15; text-transform: uppercase; letter-spacing: 1px; }
+    .hero-content p { font-size: clamp(15px, 3.5vw, 20px); margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+    @media (max-width: 480px) { .hero-content { padding: 16px; } .hero-badge { font-size: 10px; padding: 5px 12px; } }
     .hero-cta { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+    .hero-badge { display: inline-block; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); color: white; font-size: 12px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-bottom: 22px; backdrop-filter: blur(4px); }
+    .slide-placeholder { position: absolute; bottom: 80px; right: 32px; background: rgba(255,255,255,0.1); border: 1px dashed rgba(255,255,255,0.4); color: rgba(255,255,255,0.6); font-size: 12px; padding: 8px 14px; border-radius: 6px; z-index: 3; pointer-events: none; }
+    /* Slider dots */
+    .slider-dots { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 10; }
+    .slider-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.45); border: none; cursor: pointer; padding: 0; transition: background 0.3s, transform 0.3s; }
+    .slider-dot.active { background: white; transform: scale(1.25); }
+    /* Slider arrows */
+    .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; font-size: 28px; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: background 0.2s; backdrop-filter: blur(4px); line-height: 1; }
+    .slider-arrow:hover { background: rgba(255,255,255,0.3); }
+    .slider-prev { left: 20px; }
+    .slider-next { right: 20px; }
+    @media (max-width: 600px) { .slider-arrow { display: none; } }
 
     /* GEFÄHRDUNGS-ALERT */
     .alert-section { background: white; }
@@ -311,7 +349,7 @@
     <div class="container" style="padding: 0 20px; width: 100%; max-width: 100%; margin: 0; display: flex; align-items: center; justify-content: space-between; height: 100%;">
       <a class="nav-logo" href="#home" aria-label="Insektenblitz – zur Startseite">
         <img class="nav-logo-img" src="images/logo-insektenblitz.svg" alt="Insektenblitz Logo">
-        <span>Insekten<strong>blitz</strong></span>
+        <span>insekten<strong>blitz</strong></span>
       </a>
       
       <button class="hamburger" id="hamburger">
@@ -324,11 +362,19 @@
         <ul class="nav-links">
           <li><a href="#home">Home</a></li>
           <li><a href="#about">Über Uns</a></li>
-          <li><a href="#services">Schädlinge</a></li>
-          <li><a href="#alert">Gefahren</a></li>
-          <li><a href="#blog">Blog</a></li>
-          <li><a href="#faq">FAQ</a></li>
+          <li class="nav-has-sub">
+            <button class="nav-sub-toggle" aria-expanded="false" id="wissenToggle">
+              Wissen <span class="nav-sub-arrow">▾</span>
+            </button>
+            <ul class="nav-sub">
+              <li><a href="#services">Schädlinge</a></li>
+              <li><a href="#alert">Gefahren</a></li>
+              <li><a href="#blog">Blog</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ul>
+          </li>
           <li><a href="#pricing">Preise</a></li>
+          <li class="nav-kontakt-item"><a href="#kontakt">Kontakt anfragen</a></li>
         </ul>
       </div>
       
@@ -343,38 +389,97 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </a>
 
-  <!-- HERO SECTION -->
-  <section class="hero" id="home" style="background-image: url('images/hero-eps-finka.jpg?v=2'); background-size: cover; background-position: center top;">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1>Drohnen Nestbekämpfung ohne Pestizide</h1>
-      <p>Präzise, biologisch, sicher für Kinder & Haustiere</p>
-      <div class="hero-cta">
-        <a href="#kontakt" class="btn btn-call">Jetzt Beratung anfordern</a>
+  <!-- HERO SLIDER -->
+  <section class="hero-slider" id="home">
+
+    <!-- SLIDE 1: Privatkunden / EPS / Mallorca -->
+    <div class="hero-slide active" style="background-image: url('images/hero-eps-finka.jpg?v=2'); background-size: cover; background-position: center top;">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-badge">Eichenprozessionsspinner bekämpfen · Goldafter · Palmenzünsler</span>
+        <h1>In 48 Stunden wieder sicher im Garten.</h1>
+        <p>Insektenblitz bekämpft Eichenprozessionsspinner (EPS), Goldafter & Palmenzünsler – biologisch, ohne Breitflächenpestizide. KI-gestützte Drohnen finden jedes Nest bis 20 m Höhe. Für Privatkunden, Kommunen & Unternehmen in Deutschland & Spanien.</p>
+        <div class="hero-cta">
+          <a href="#kontakt" class="btn btn-call">Jetzt Beratung anfordern</a>
+        </div>
       </div>
     </div>
+
+    <!-- SLIDE 2: Asset Manager / Property Manager -->
+    <div class="hero-slide" style="background-image: url('images/hero-portfolio.jpg'); background-size: cover; background-position: center top;">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-badge">Asset Manager · Property Manager · Wohnungsgesellschaften</span>
+        <h1>Schädlingsmanagement für Ihr Immobilienportfolio</h1>
+        <p>Skalierbare EPS-Bekämpfung für Liegenschaften, Wohnanlagen & Gewerbeimmobilien – mit lückenloser Dokumentation</p>
+        <div class="hero-cta">
+          <a href="#kontakt" class="btn btn-call">Portfolioberatung anfragen</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Kindergarten / Familien -->
+    <!-- BILD: hero-kindergarten.jpg einfügen sobald verfügbar -->
+    <div class="hero-slide" style="background-image: url('images/hero-kindergarten.jpg'); background-size: cover; background-position: center center;">
+      <div class="hero-overlay" style="background: linear-gradient(135deg, rgba(29, 90, 61, 0.70), rgba(45, 134, 89, 0.45));"></div>
+      <div class="hero-content">
+        <span class="hero-badge">Familien · Kindergärten · Schulen · Spielplätze</span>
+        <h1 style="text-transform: none; letter-spacing: 0;">Ihr Kind spielt draußen. Eichenprozessionsspinner auch.</h1>
+        <p>Gifthaare in der Luft — unsichtbar, windverteilt, jahrelang aktiv. Besonders für Allergiker reicht ein kurzer Aufenthalt unter befallenen Eichen für Hautausschlag, Atemnot und allergische Schocks.</p>
+        <div class="hero-cta">
+          <a href="#kontakt" class="btn btn-call">Spielgelände jetzt schützen →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Büro / Gewerbe -->
+    <div class="hero-slide" style="background-image: url('images/hero-office.jpg'); background-size: cover; background-position: center center;">
+      <div class="hero-overlay" style="background: linear-gradient(135deg, rgba(15,20,25,0.70), rgba(30,40,50,0.45));"></div>
+      <div class="hero-content">
+        <span class="hero-badge">Unternehmen · Büros · Gewerbeimmobilien</span>
+        <h1 style="text-transform: none; letter-spacing: 0;">Eichenprozessionsspinner kosten Sie mehr als Sie denken.</h1>
+        <p>Geschlossene Fenster. Heiße Büros. Genervte Mitarbeiter.<br>Ein einziges Nest an der Büro-Eiche — und Ihr Außengelände ist gesperrt.</p>
+        <div class="hero-cta">
+          <a href="#kontakt" class="btn btn-call">Kostenlose Erstberatung →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="slider-dots">
+      <button class="slider-dot active" onclick="heroGoTo(0)" aria-label="Slide 1: Privatkunden"></button>
+      <button class="slider-dot" onclick="heroGoTo(1)" aria-label="Slide 2: Asset Manager"></button>
+      <button class="slider-dot" onclick="heroGoTo(2)" aria-label="Slide 3: Kindergarten & Familien"></button>
+      <button class="slider-dot" onclick="heroGoTo(3)" aria-label="Slide 4: Büro & Gewerbe"></button>
+    </div>
+    <button class="slider-arrow slider-prev" onclick="heroShift(-1)" aria-label="Vorheriger Slide">&#8249;</button>
+    <button class="slider-arrow slider-next" onclick="heroShift(1)" aria-label="Nächster Slide">&#8250;</button>
+
   </section>
 
   <!-- ÜBER UNS SECTION -->
   <section class="section" style="background: white;" id="about">
     <div class="container">
-      <h2 class="section-title">Wie alles begann</h2>
+      <h2 class="section-title">Entstanden aus Wut auf eine schlechte Antwort</h2>
       <p class="section-subtitle">Nicht im Labor, nicht in einem Büro – sondern im Urlaub auf Mallorca. Mitten im Sommer, mitten im Befall.</p>
 
       <div style="max-width: 820px; margin: 50px auto 0;">
         <p style="color: var(--text-light); line-height: 1.9; font-size: 16px; margin-bottom: 20px;">
-          Es war ein ganz normaler Urlaubsmorgen auf einer mallorquinischen Finca. Beim Frühstück im Garten fiel uns auf, dass die alten Pinien um das Haus herum seltsam aussahen – kahle Äste, schleimige Gespinstfäden, und irgendwo aus dem Gebüsch bewegte sich eine Raupenprozession in schnurgerader Linie. Palmenzünsler. Und weiter hinten am Hang: große silbrige Nester in den Eichen – Eichenprozessionsspinner.
+          Mallorca, Sommer 2023. Beim Frühstück auf einer Finca fallen seltsam kahle Pinien auf – Gespinstfäden, eine Raupenprozession in schnurgerader Linie. Wir fragen den Hausverwalter.
         </p>
         <p style="color: var(--text-light); line-height: 1.9; font-size: 16px; margin-bottom: 20px;">
-          Wir fragten den Hausverwalter, was dagegen unternommen werde. Die Antwort war ernüchternd: Man warte, bis der Befall so schlimm sei, dass ein Sprühwagen die gesamte Fläche einneble – Kinder und Haustiere tagelang drinnen, Bienen und Schmetterlinge mit eingeschlossen. <strong style="color: var(--text-dark);">Das kann nicht die Lösung sein</strong>, dachten wir.
+          Seine Antwort: <em>„Wir warten, bis es schlimm genug ist. Dann kommt ein Sprühwagen und nebelt alles ein."</em>
+        </p>
+        <p style="color: var(--text-light); line-height: 1.9; font-size: 16px; margin-bottom: 20px;">
+          Kinder drinnen. Hunde drinnen. Bienen, Schmetterlinge – alles eingenebelt.
         </p>
 
-        <blockquote style="border-left: 4px solid var(--safe-green); padding: 20px 28px; margin: 36px 0; background: var(--bg-light); border-radius: 0 8px 8px 0;">
-          <p style="font-size: 17px; font-style: italic; color: var(--text-dark); line-height: 1.8; margin: 0;">„Warum behandelt man nicht einfach nur die Nester – präzise, gezielt, ohne alles andere zu schädigen? Eine Drohne könnte jeden Baum inspizieren, jedes Nest finden – in Minuten statt Stunden."</p>
+        <blockquote style="border-left: 4px solid var(--safe-green); padding: 20px 28px; margin: 36px 0; margin-left: 0; background: var(--bg-light); border-radius: 0 8px 8px 0;">
+          <p style="font-size: 17px; font-style: italic; color: var(--text-dark); line-height: 1.8; margin: 0;">„Das kann nicht die Lösung sein."</p>
         </blockquote>
 
         <p style="color: var(--text-light); line-height: 1.9; font-size: 16px; margin-bottom: 20px;">
-          Aus dieser Frage entstand Insektenblitz. Zurück in Deutschland begannen wir, gemeinsam mit Drohnenpiloten und Biologen eine Methode zu entwickeln, die das leistet: <strong style="color: var(--text-dark);">KI-gestützte Nestlokalisation, gezielte biologische Behandlung – Nest für Nest, ohne Breitflächenpestizide.</strong> Sicher für Kinder, Haustiere und Nützlinge.
+          Zurück in Deutschland haben wir gemeinsam mit Biologen und Experten eine Methode entwickelt, die das eigentliche Problem löst: <strong style="color: var(--text-dark);">Nest für Nest. Präzise. Biologisch. Sicher.</strong> Nicht den Garten einzunebeln – die Nester zu beseitigen. Das ist Insektenblitz.
         </p>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 40px;">
@@ -389,14 +494,20 @@
             <p style="color: var(--text-light); font-size: 14px; margin-top: 6px; line-height: 1.6;">Nur die Nester – nicht der gesamte Garten</p>
           </div>
           <div style="background: var(--bg-light); border-radius: var(--radius); padding: 24px; border-left: 4px solid var(--safe-green);">
-            <div style="font-size: 32px; margin-bottom: 8px;">🤝</div>
-            <strong style="color: var(--text-dark); font-size: 15px;">Familienbetrieb</strong>
-            <p style="color: var(--text-light); font-size: 14px; margin-top: 6px; line-height: 1.6;">Persönliche Beratung, faire Preise, schnelle Reaktion</p>
+            <div style="font-size: 32px; margin-bottom: 8px;">📋</div>
+            <strong style="color: var(--text-dark); font-size: 15px;">Lückenlose Dokumentation</strong>
+            <p style="color: var(--text-light); font-size: 14px; margin-top: 6px; line-height: 1.6;">Digitaler Bericht: Nestkoordinaten, Mittel, Freigabestatus</p>
           </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- ZWISCHEN-CTA 1 -->
+  <div style="background: var(--primary-green); padding: 20px; text-align: center;">
+    <p style="color: rgba(255,255,255,0.85); font-size: 13px; margin-bottom: 10px;">✅ Kostenlose Erstberatung &nbsp;·&nbsp; Reaktion in 24h &nbsp;·&nbsp; 99% weniger Pestizide</p>
+    <a href="#kontakt" class="btn btn-call" style="padding: 13px 28px; font-size: 14px;">Jetzt Beratung anfordern →</a>
+  </div>
 
   <!-- GEFÄHRDUNGS-ALERT -->
   <section class="section alert-section" id="alert">
@@ -441,41 +552,39 @@
   <!-- USP SECTION -->
   <section class="section" style="background: white;" id="usp">
     <div class="container">
-      <h2 class="section-title">Warum unsere Drohnen-Methode?</h2>
-      <p class="section-subtitle">Während andere großflächig sprühen und Chemikalien über Ihren gesamten Garten verteilen, arbeiten wir gezielt – Nest für Nest. Das ist unser Versprechen an Ihre Familie.</p>
+      <h2 class="section-title">Was Sie von uns bekommen</h2>
+      <p class="section-subtitle">Kein vager Einsatz, kein Abwarten. Vier konkrete Versprechen – die wir einhalten.</p>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 50px;">
 
         <div style="background: var(--bg-light); border-radius: var(--radius); padding: 30px; border-left: 4px solid var(--primary-green);">
-          <div style="font-size: 40px; margin-bottom: 15px;">🤖</div>
-          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);">KI-gestützte Nesterlokalisation</h3>
-          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Unsere Drohnen scannen mit KI-Kameratechnologie Bäume und Gärten und lokalisieren jedes einzelne Nest – auch in schwer zugänglichen Höhen. Kein Nest bleibt unentdeckt.</p>
+          <div style="font-size: 40px; margin-bottom: 15px;">🏡</div>
+          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);">Nach unserem Einsatz: Kinder spielen wieder draußen</h3>
+          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Nicht „irgendwann wenn wir sehen was passiert". Wir geben eine konkrete Freigabe – durchschnittlich <strong style="color: var(--text-dark);">48 Stunden</strong> nach dem Einsatz. Das ist unser Standard.</p>
         </div>
 
         <div style="background: var(--bg-light); border-radius: var(--radius); padding: 30px; border-left: 4px solid var(--primary-green);">
-          <div style="font-size: 40px; margin-bottom: 15px;">🎯</div>
-          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);">Präzise Behandlung – 99% weniger Pestizide</h3>
-          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Statt Breitflächensprühung behandeln wir ausschließlich die Nester. Das bedeutet: 99% weniger Chemikalien in Ihrem Garten – und maximale Sicherheit für Kinder, Haustiere und Nützlinge.</p>
-        </div>
-
-        <div style="background: var(--bg-light); border-radius: var(--radius); padding: 30px; border-left: 4px solid var(--primary-green);">
-          <div style="font-size: 40px; margin-bottom: 15px;">🌿</div>
-          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);">Biologisch & umweltverträglich</h3>
-          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Wir setzen auf biologisch abbaubare Wirkstoffe, die gezielt gegen Schädlinge wirken – ohne Bienen, Schmetterlinge oder Bodentiere zu schädigen. Natur schützen statt zerstören.</p>
+          <div style="font-size: 40px; margin-bottom: 15px;">🔍</div>
+          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);">Kein Nest bleibt unentdeckt – oder wir kommen nochmal</h3>
+          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Wir finden Nester bis in 20 Meter Höhe, die bei Bodenkontrolle unsichtbar bleiben. Sollte innerhalb von 30 Tagen ein übersehenes Nest auftreten: <strong style="color: var(--text-dark);">kostenloser Nachfolge-Einsatz.</strong> Unser Risiko, nicht Ihres.</p>
         </div>
 
         <div style="background: var(--bg-light); border-radius: var(--radius); padding: 30px; border-left: 4px solid var(--accent-yellow);">
           <div style="font-size: 40px; margin-bottom: 15px;">⚡</div>
-          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);">Schnelle Verfügbarkeit</h3>
-          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Bei akutem Befall handeln wir sofort. Kurze Reaktionszeiten, flexible Terminplanung – damit Ihre Familie schnellstmöglich wieder sicher im Garten sein kann.</p>
+          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);">Reaktion in 24h – bei akutem Befall innerhalb 48h vor Ort</h3>
+          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Keine wochenlange Warteliste. Bei akutem Befall gibt es einen Notfall-Slot. Wir kommen, wenn es brennt.</p>
         </div>
 
         <div style="background: var(--bg-light); border-radius: var(--radius); padding: 30px; border-left: 4px solid var(--accent-yellow);">
-          <div style="font-size: 40px; margin-bottom: 15px;">📞</div>
-          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);">Kostenlose Erstberatung</h3>
-          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Unsicher, ob Sie betroffen sind? Rufen Sie uns an – wir beraten Sie kostenlos und unverbindlich. Gemeinsam finden wir die beste Lösung für Ihren konkreten Fall.</p>
+          <div style="font-size: 40px; margin-bottom: 15px;">📋</div>
+          <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 12px; color: var(--text-dark);">Sie öffnen das Tor – wir erledigen den Rest</h3>
+          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Kein Vorbereiten, kein Absperren, kein Aufräumen. Nach dem Einsatz erhalten Sie einen digitalen Bericht: Nestkoordinaten, eingesetzte Mittel, Freigabestatus – dokumentationssicher für Versicherung und Behörden.</p>
         </div>
 
+      </div>
+
+      <div style="margin-top: 40px; text-align: center; padding: 20px; background: var(--bg-light); border-radius: var(--radius);">
+        <p style="font-size: 15px; color: var(--text-light);">✅ Kostenlose Erstberatung &nbsp;·&nbsp; Reaktion in 24h &nbsp;·&nbsp; Ganzjahresschutz</p>
       </div>
     </div>
   </section>
@@ -681,6 +790,73 @@
     </div>
   </section>
 
+  <!-- ZWISCHEN-CTA 2 -->
+  <div style="background: var(--danger-red); padding: 20px; text-align: center;">
+    <p style="color: rgba(255,255,255,0.9); font-size: 13px; margin-bottom: 10px;">Befall entdeckt? Wir sind innerhalb von 48h vor Ort.</p>
+    <a href="#kontakt" class="btn" style="background: white; color: var(--danger-red); font-weight: 700; padding: 13px 28px; font-size: 14px;">Jetzt Anfrage stellen →</a>
+  </div>
+
+  <!-- GANZJAHRESSCHUTZ -->
+  <section class="section" style="background: white;" id="ganzjahresschutz">
+    <div class="container">
+      <h2 class="section-title">EPS schläft – aber schützen Sie sich das ganze Jahr</h2>
+      <p class="section-subtitle">Die meisten warten, bis sie Raupen sehen. Das ist zu spät.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin: 40px 0;">
+        <div style="background: #fff8e1; border-radius: var(--radius); padding: 28px; border-top: 4px solid var(--accent-yellow);">
+          <div style="font-size: 36px; margin-bottom: 12px;">🌿</div>
+          <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 10px;">Frühjahr & Sommer (April–Juli): Die Raupen sind aktiv</h3>
+          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Jetzt ist die sichtbare Gefahr real. Gifthaare in der Luft, Prozessionen auf dem Boden, Kinder in unmittelbarer Nähe. Akute Bekämpfung ist jetzt das Gebot.</p>
+        </div>
+        <div style="background: #e8f5ec; border-radius: var(--radius); padding: 28px; border-top: 4px solid var(--primary-green);">
+          <div style="font-size: 36px; margin-bottom: 12px;">🍂</div>
+          <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 10px;">Herbst (September–November): Die Falter legen Eier</h3>
+          <p style="color: var(--text-light); font-size: 14px; line-height: 1.7;">Was kaum jemand weiß: Im Herbst legen EPS-Falter neue Eier. Die Nester der nächsten Saison entstehen jetzt – noch klein, noch leicht zu beseitigen, noch keine Gifthaare. <strong style="color: var(--text-dark);">Wer jetzt handelt, hat im Frühjahr keinen Befall.</strong></p>
+        </div>
+      </div>
+
+      <div style="overflow-x: auto; margin: 30px 0;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 500px;">
+          <thead>
+            <tr style="background: var(--primary-green); color: white;">
+              <th style="padding: 14px 16px; text-align: left; font-weight: 700;">Saison</th>
+              <th style="padding: 14px 16px; text-align: left; font-weight: 700;">Was passiert</th>
+              <th style="padding: 14px 16px; text-align: left; font-weight: 700;">Was wir tun</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 12px 16px; font-weight: 600; color: var(--text-dark);">April–Mai</td>
+              <td style="padding: 12px 16px; color: var(--text-light);">Raupen schlüpfen, noch ohne Gifthaare</td>
+              <td style="padding: 12px 16px; color: var(--primary-green); font-weight: 600;">Früherkennung & Behandlung — günstigste Phase</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border); background: var(--bg-light);">
+              <td style="padding: 12px 16px; font-weight: 600; color: var(--text-dark);">Mai–Juli</td>
+              <td style="padding: 12px 16px; color: var(--text-light);">Voll entwickelte Brennhaare, akute Gefahr</td>
+              <td style="padding: 12px 16px; color: var(--danger-red); font-weight: 600;">Sofortbekämpfung mit Schutzprotokoll</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 12px 16px; font-weight: 600; color: var(--text-dark);">Sept.–Nov.</td>
+              <td style="padding: 12px 16px; color: var(--text-light);">Falter legen Eier, neue Nester entstehen</td>
+              <td style="padding: 12px 16px; color: var(--primary-green); font-weight: 600;">Herbstinspektion — Nester eliminieren bevor Saison beginnt</td>
+            </tr>
+            <tr style="background: var(--bg-light);">
+              <td style="padding: 12px 16px; font-weight: 600; color: var(--text-dark);">Ganzjährig</td>
+              <td style="padding: 12px 16px; color: var(--text-light);">Monitoring für größere Objekte</td>
+              <td style="padding: 12px 16px; color: var(--primary-green); font-weight: 600;">Jahresvertrag mit 2–3 Begehungen</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="background: linear-gradient(135deg, var(--primary-green), var(--primary-light)); border-radius: var(--radius); padding: 36px; color: white; text-align: center; margin-top: 10px;">
+        <h3 style="font-family: var(--serif); font-size: 20px; font-weight: 700; margin-bottom: 12px;">Jahresschutzvertrag: Sorglos durch beide Saisons</h3>
+        <p style="font-size: 15px; line-height: 1.7; opacity: 0.92; max-width: 600px; margin: 0 auto 24px;">Für Hausbesitzer, Kommunen und Unternehmen mit Eichen auf dem Grundstück: Wir kommen im Herbst zur Inspektion, eliminieren neue Nester – und Sie starten jede Saison mit einem sauberen Grundstück.</p>
+        <a href="#kontakt" class="btn btn-call">Jahresvertrag anfragen</a>
+      </div>
+    </div>
+  </section>
+
   <!-- BLOG -->
   <section class="section" id="blog">
     <div class="container">
@@ -733,9 +909,29 @@
           </div>
         </div>
 
+        <!-- ARTIKEL 4: EPS Bürogebäude -->
+        <div style="background: white; border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.08); transition: all 0.3s; display: flex; flex-direction: column;">
+          <div style="position: relative;">
+            <img src="images/blog-4-buero.jpg" alt="Büro mit geschlossenen Fenstern bei sommerlicher Hitze" style="width: 100%; height: 200px; object-fit: cover; display: block;" loading="lazy" decoding="async">
+            <span style="position: absolute; top: 12px; left: 12px; background: var(--primary-green); color: white; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;">Arbeitsschutz</span>
+          </div>
+          <div style="padding: 22px; flex-grow: 1; display: flex; flex-direction: column;">
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Juni 2026 · 5 Min Lesezeit</p>
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; line-height: 1.4;">Fenster zu trotz Hochsommer: Wenn der EPS Büros und Betriebe lahmlegt</h3>
+            <p style="font-size: 14px; color: var(--text-light); line-height: 1.7; margin-bottom: 18px; flex-grow: 1;">Brennhaare wehen durch offene Fenster – in Deutschland zwingt der Eichenprozessionsspinner immer mehr Betriebe zum Lüftungsverzicht. Was Arbeitgeber rechtlich schulden und was Gebäudeverantwortliche jetzt tun müssen.</p>
+            <a href="blog-eps-buerogebaeude.html" style="color: var(--primary-green); font-weight: 700; font-size: 13px;">Artikel lesen →</a>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
+
+  <!-- ZWISCHEN-CTA 3 -->
+  <div style="background: var(--primary-green); padding: 20px; text-align: center;">
+    <p style="color: rgba(255,255,255,0.85); font-size: 13px; margin-bottom: 10px;">Kein Nest gefunden = keine Rechnung. 30-Tage-Nachbehandlungsgarantie.</p>
+    <a href="#kontakt" class="btn btn-call" style="padding: 13px 28px; font-size: 14px;">Kostenlose Erstberatung →</a>
+  </div>
 
   <!-- FAQ SECTION -->
   <section class="section" style="background: white;" id="faq">
@@ -747,31 +943,81 @@
 
         <div class="faq-item open">
           <button class="faq-question">
-            Was ist der Eichenprozessionsspinner (EPS) und warum ist er gefährlich?
+            Was kostet eine EPS-Bekämpfung?
             <span class="faq-arrow">▼</span>
           </button>
           <div class="faq-answer">
-            Der Eichenprozessionsspinner (<em>Thaumetopoea processionea</em>) ist ein Nachtfalter, dessen Raupen winzige Gifthaare (Brennhaare) tragen. Diese Haare enthalten das Protein Thaumetopoein und lösen bei Hautkontakt oder Einatmen heftige allergische Reaktionen aus: Hautausschlag, Juckreiz, Atemnot bis hin zu anaphylaktischen Schocks. Besonders gefährdet sind Kinder, Haustiere und Menschen mit Allergien. Die Haare können sich durch Wind verbreiten und bleiben noch Jahre in alten Nestern giftig.
+            Ein Standardeinsatz für einen Privatgarten mit 3–8 Eichen liegt typischerweise zwischen 350 und 850 Euro. Für Kommunen, Schulhöfe und größere Grundstücke erstellen wir nach kostenloser Erstberatung ein individuelles Angebot.
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-question">
-            Wie funktioniert die Drohnen-Nestbekämpfung genau?
+            Wann ist der beste Zeitpunkt für eine Behandlung?
             <span class="faq-arrow">▼</span>
           </button>
           <div class="faq-answer">
-            Unsere Drohnen fliegen mit KI-gestützten Kameras über die betroffenen Bäume und lokalisieren alle Nester – auch in Höhen, die per Leiter nicht erreichbar sind. Anschließend werden gezielt nur die Nester mit einem biologisch abbaubaren Wirkstoff behandelt. Keine Breitflächenbehandlung, keine unnötige Chemikalienbelastung. Das Ergebnis: Vollständige Bekämpfung bei minimalem Einsatz von Pflanzenschutzmitteln.
+            Es gibt zwei optimale Zeitfenster: <strong>April/Mai</strong> — wenn Raupen schlüpfen, aber noch keine Gifthaare entwickelt haben. Und <strong>September/Oktober</strong> — wenn Falter neue Eier legen. Wer im Herbst handelt, verhindert den Befall des nächsten Frühjahrs. Ein Jahresschutzvertrag deckt beide Phasen ab.
           </div>
         </div>
 
         <div class="faq-item">
           <button class="faq-question">
-            Ist die Behandlung wirklich sicher für Kinder und Haustiere?
+            Sind Ihre Methoden für Kinder und Haustiere sicher?
             <span class="faq-arrow">▼</span>
           </button>
           <div class="faq-answer">
-            Ja. Da wir ausschließlich die Nester behandeln (nicht großflächig den gesamten Bereich), ist die Exposition gegenüber Wirkstoffen minimal. Wir verwenden biologisch abbaubare Mittel, die gezielt auf die Schädlinge wirken. Nach kurzer Wartezeit ist der Bereich wieder vollständig sicher für Kinder, Haustiere und Nützlinge wie Bienen oder Schmetterlinge.
+            Ja. Wir setzen ausschließlich biologisch abbaubare Wirkstoffe ein — und behandeln nur die Nester direkt, nie Spielflächen, Rasen oder den restlichen Garten. Pestizide im Spielbereich: 99% weniger als bei herkömmlicher Flächensprühung.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            Wie schnell seid ihr vor Ort?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Bei akutem Befall: Reaktion in 24 Stunden, Einsatz innerhalb 48 Stunden möglich. Für Herbstinspektionen und geplante Jahresverträge stimmen wir Termine individuell ab.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            Wie findet ihr Nester in großer Höhe?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Wir setzen KI-gestützte Drohnentechnologie für die Nestlokalisation ein — das erlaubt uns, Nester bis in 20 Meter Höhe zuverlässig zu finden. Das Ergebnis ist eine lückenlose Karte aller Nest-Standorte auf Ihrem Grundstück.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            Was passiert nach dem Einsatz?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Sie erhalten einen digitalen Einsatzbericht mit Nestkoordinaten, eingesetzten Mitteln und Freigabestatus — dokumentationssicher für Versicherung und Behörden. Bei kommunalen Aufträgen inkl. vollständigem Nachweis nach §10 PflSchG.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            Bietet ihr auch Jahresschutz an?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Ja. Unser Jahresschutzvertrag umfasst mindestens zwei Begehungen (Frühjahr + Herbst) und gibt Ihnen die Sicherheit, dass keine Saison unbeaufsichtigt beginnt. Für Grundstücke mit mehreren Eichen und für Kommunen besonders empfohlen.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            Arbeitet ihr auch für Kommunen, Schulen und Unternehmen?
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            Ja. Öffentliche Aufträge beinhalten vollen Dokumentationsnachweis und können über Jahresvertrag gebucht werden. Schulhöfe, Parkanlagen und Firmenparkplätze — wir haben Erfahrung mit allen Objekttypen.
           </div>
         </div>
 
@@ -781,37 +1027,7 @@
             <span class="faq-arrow">▼</span>
           </button>
           <div class="faq-answer">
-            Ja. Insbesondere der Palmenzünsler (<em>Rhynchophorus ferrugineus</em>) ist auf Mallorca und im übrigen Spanien ein massives Problem und zerstört jährlich tausende Palmen. Wir bieten unsere KI-gestützte Drohnen-Inspektion und Palmenzünsler-Bekämpfung auch auf Mallorca und in anderen spanischen Regionen an. Sprechen Sie uns direkt an.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            Wie schnell können Sie nach einer Anfrage reagieren?
-            <span class="faq-arrow">▼</span>
-          </button>
-          <div class="faq-answer">
-            Bei akutem Befall priorisieren wir Ihre Anfrage und streben schnellstmögliche Termine an. Rufen Sie uns direkt an – wir besprechen die Dringlichkeit und finden den frühestmöglichen Einsatztermin. Gerade in der Hauptsaison (April–Juli für EPS) ist schnelles Handeln entscheidend.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            Bieten Sie eine kostenlose Erstberatung an?
-            <span class="faq-arrow">▼</span>
-          </button>
-          <div class="faq-answer">
-            Ja, absolut. Rufen Sie uns einfach an – wir besprechen kostenlos und unverbindlich Ihren konkreten Fall: Welcher Schädling ist es? Wie groß ist der Befall? Welche Lösung ist die richtige? Erst nach der Beratung und mit Ihrem Einverständnis erstellen wir ein Angebot.
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <button class="faq-question">
-            Was kostet eine Drohnen-Nestbekämpfung?
-            <span class="faq-arrow">▼</span>
-          </button>
-          <div class="faq-answer">
-            Die Kosten hängen vom Ausmaß des Befalls, der Anzahl der Nester, der Baumhöhe und dem Standort ab. Wir bieten individuelle Angebote nach kostenloser Erstberatung an – schnell, transparent und ohne versteckte Kosten. Rufen Sie uns einfach an.
+            Ja. Insbesondere der Palmenzünsler (<em>Rhynchophorus ferrugineus</em>) ist auf Mallorca und im übrigen Spanien ein massives Problem und zerstört jährlich tausende Palmen. Wir bieten unsere KI-gestützte Drohnen-Inspektion und Palmenzünsler-Bekämpfung auch auf Mallorca und in anderen spanischen Regionen an.
           </div>
         </div>
 
@@ -822,11 +1038,13 @@
         "@context": "https://schema.org",
         "@type": "FAQPage",
         "mainEntity": [
-          { "@type": "Question", "name": "Was ist der Eichenprozessionsspinner (EPS) und warum ist er gefährlich?", "acceptedAnswer": { "@type": "Answer", "text": "Der Eichenprozessionsspinner trägt Gifthaare, die bei Hautkontakt oder Einatmen allergische Reaktionen auslösen: Hautausschlag, Juckreiz, Atemnot bis hin zu anaphylaktischen Schocks. Besonders gefährdet sind Kinder, Haustiere und Allergiker." } },
-          { "@type": "Question", "name": "Wie funktioniert die Drohnen-Nestbekämpfung?", "acceptedAnswer": { "@type": "Answer", "text": "KI-gestützte Drohnen lokalisieren alle Nester präzise. Anschließend werden ausschließlich die Nester behandelt – keine Breitflächenbehandlung, 99% weniger Pestizide als bei herkömmlichen Methoden." } },
-          { "@type": "Question", "name": "Ist die Behandlung sicher für Kinder und Haustiere?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Durch die gezielte Nestbehandlung ist die Wirkstoffexposition minimal. Biologisch abbaubare Mittel werden nur an den Nestern eingesetzt. Nach kurzer Wartezeit ist der Bereich wieder sicher." } },
-          { "@type": "Question", "name": "Bekämpfen Sie auch Palmenzünsler auf Mallorca?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Wir bieten KI-gestützte Drohnen-Inspektion und Palmenzünsler-Bekämpfung auch auf Mallorca und in Spanien an." } },
-          { "@type": "Question", "name": "Bieten Sie eine kostenlose Erstberatung an?", "acceptedAnswer": { "@type": "Answer", "text": "Ja, kostenlos und unverbindlich. Rufen Sie uns an – wir besprechen Ihren Fall und erstellen danach ein transparentes Angebot." } }
+          { "@type": "Question", "name": "Was kostet eine EPS-Bekämpfung?", "acceptedAnswer": { "@type": "Answer", "text": "Ein Standardeinsatz für einen Privatgarten mit 3–8 Eichen liegt typischerweise zwischen 350 und 850 Euro. Für Kommunen und größere Objekte erstellen wir individuelle Angebote nach kostenloser Erstberatung." } },
+          { "@type": "Question", "name": "Wann ist der beste Zeitpunkt für eine Behandlung?", "acceptedAnswer": { "@type": "Answer", "text": "April/Mai (Raupen ohne Gifthaare) und September/Oktober (Falter legen Eier). Wer im Herbst handelt, verhindert den Befall des nächsten Frühjahrs." } },
+          { "@type": "Question", "name": "Sind Ihre Methoden für Kinder und Haustiere sicher?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Biologisch abbaubare Wirkstoffe, nur an den Nestern, nie auf Spielflächen oder Rasen. 99% weniger Pestizide als bei Flächensprühung." } },
+          { "@type": "Question", "name": "Wie schnell seid ihr vor Ort?", "acceptedAnswer": { "@type": "Answer", "text": "Bei akutem Befall: Reaktion in 24 Stunden, Einsatz innerhalb 48 Stunden möglich." } },
+          { "@type": "Question", "name": "Wie findet ihr Nester in großer Höhe?", "acceptedAnswer": { "@type": "Answer", "text": "KI-gestützte Drohnentechnologie erlaubt Nestlokalisation bis in 20 Meter Höhe – mit lückenloser Karte aller Standorte." } },
+          { "@type": "Question", "name": "Was passiert nach dem Einsatz?", "acceptedAnswer": { "@type": "Answer", "text": "Digitaler Einsatzbericht: Nestkoordinaten, eingesetzte Mittel, Freigabestatus. Dokumentationssicher für Versicherung, Behörden und nach §10 PflSchG." } },
+          { "@type": "Question", "name": "Bekämpfen Sie auch Palmenzünsler auf Mallorca?", "acceptedAnswer": { "@type": "Answer", "text": "Ja. Wir bieten KI-gestützte Drohnen-Inspektion und Palmenzünsler-Bekämpfung auch auf Mallorca und in Spanien an." } }
         ]
       }
       </script>
@@ -995,11 +1213,122 @@
     </div>
   </section>
 
+  <!-- LISTICLE: Die zuverlässigsten EPS-Anbieter -->
+  <section class="section" id="anbieter" style="background: var(--bg-light);">
+    <div class="container">
+      <h2 class="section-title">Die 6 zuverlässigsten Anbieter für EPS-Bekämpfung in Deutschland (2026)</h2>
+      <p class="section-subtitle">Stand: 2026 · Kriterien: Reaktionszeit, Abdeckung, Methodik, Ganzjahresverfügbarkeit. Eichenprozessionsspinner-Bekämpfung ist Vertrauenssache – falsch durchgeführt verteilen sich Gifthaare statt beseitigt zu werden.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 40px;">
+
+        <!-- 1. Insektenblitz -->
+        <div style="background: white; border-radius: var(--radius); padding: 30px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-left: 5px solid #f4c430;">
+          <div style="display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap;">
+            <span style="font-size: 28px; flex-shrink: 0;">🥇</span>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--text-dark); margin: 0;">Insektenblitz</h3>
+                <span style="background: var(--primary-green); color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;">Deutschlandweit · Ganzjahresschutz</span>
+              </div>
+              <p style="font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 10px;">Spezialisierung: EPS, Goldafter, Palmenzünsler · Deutschland & Spanien</p>
+              <p style="font-size: 15px; color: var(--text-light); line-height: 1.75; margin-bottom: 14px;">Insektenblitz ist der einzige Anbieter in Deutschland, der KI-gestützte Präzisionserkennung mit einem ganzjährigen Schutzprogramm kombiniert. Nester werden nicht nur in der Akutsaison bekämpft, sondern auch im Herbst erkannt und eliminiert – bevor der Befall im nächsten Frühjahr eskaliert. Behandlung ausschließlich an den Nestern, nicht flächig – 99% weniger Chemikalien im Spielbereich. Reaktion innerhalb 24 Stunden bei akutem Befall.</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span style="background: #e8f5ec; color: var(--primary-green); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ Jahresschutzvertrag</span>
+                <span style="background: #e8f5ec; color: var(--primary-green); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ Digitaler Einsatzbericht</span>
+                <span style="background: #e8f5ec; color: var(--primary-green); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ 30-Tage-Nachbehandlungsgarantie</span>
+                <span style="background: #e8f5ec; color: var(--primary-green); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ Auch auf Mallorca</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Fassadenblitz -->
+        <div style="background: white; border-radius: var(--radius); padding: 30px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-left: 5px solid #b0b0b0;">
+          <div style="display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap;">
+            <span style="font-size: 28px; flex-shrink: 0;">🥈</span>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--text-dark); margin: 0;">Fassadenblitz</h3>
+                <span style="background: var(--text-light); color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;">Deutschlandweit · Fokus Institutionell</span>
+              </div>
+              <p style="font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 10px;">Spezialisierung: Biologische Außenbereichspflege für institutionelle Immobilienportfolios</p>
+              <p style="font-size: 15px; color: var(--text-light); line-height: 1.75; margin-bottom: 14px;">Fassadenblitz ist auf große institutionelle Objekte spezialisiert – Pflegeheime, Kliniken, Fondsimmobilien. Neben Fassadenreinigung gehört der EPS-Schutz von Außenanlagen zum Leistungsportfolio. Für Asset Manager mit Portfolios ab 10 Objekten besonders geeignet – ein Ansprechpartner, ein Vertrag, alle Objekte.</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span style="background: var(--bg-light); color: var(--text-light); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ Rahmenverträge für Portfolios</span>
+                <span style="background: var(--bg-light); color: var(--text-light); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ Dokumentation für Betreiberpflichten</span>
+                <span style="background: var(--bg-light); color: var(--text-light); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ Deutschlandweite Abdeckung</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Schädlingshero -->
+        <div style="background: white; border-radius: var(--radius); padding: 30px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-left: 5px solid #cd7f32;">
+          <div style="display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap;">
+            <span style="font-size: 28px; flex-shrink: 0;">🥉</span>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px;">
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--text-dark); margin: 0;">Schädlingshero</h3>
+                <span style="background: var(--text-light); color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;">Regional · Privat & Gewerbe</span>
+              </div>
+              <p style="font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 10px;">Spezialisierung: Allgemeine Schädlingsbekämpfung inkl. EPS</p>
+              <p style="font-size: 15px; color: var(--text-light); line-height: 1.75; margin-bottom: 14px;">Schädlingshero bietet schnelle Reaktionszeiten für Privatkunden und kleinere Gewerbeobjekte. Online-Buchung, feste Festpreise, kein Jahresvertragszwang. Gute Erstanlaufstelle für akute Einzelfälle.</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <span style="background: var(--bg-light); color: var(--text-light); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ Online-Buchung</span>
+                <span style="background: var(--bg-light); color: var(--text-light); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ Festpreise</span>
+                <span style="background: var(--bg-light); color: var(--text-light); font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px;">✅ Privatkunden</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4–6 kompakter -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+
+          <div style="background: white; border-radius: var(--radius); padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.07); border-top: 3px solid var(--border);">
+            <p style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px;">4. Ambitec Schädlingsbekämpfung</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Bundesweit · Seit 1995</p>
+            <p style="font-size: 14px; color: var(--text-light); line-height: 1.7; margin-bottom: 12px;">Eines der erfahrensten EPS-Unternehmen Deutschlands. Maßgeblich an der Entwicklung von Sprühkanonen zur präventiven EPS-Bekämpfung beteiligt. Akuteinsätze unter vollem Atemschutz, fachgerechte Entsorgung.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <span style="background: var(--bg-light); color: var(--text-light); font-size: 11px; padding: 3px 8px; border-radius: 20px;">Jahrzehnte Erfahrung</span>
+              <span style="background: var(--bg-light); color: var(--text-light); font-size: 11px; padding: 3px 8px; border-radius: 20px;">Eigene Gerätentwicklung</span>
+            </div>
+          </div>
+
+          <div style="background: white; border-radius: var(--radius); padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.07); border-top: 3px solid var(--border);">
+            <p style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px;">5. Enviro GmbH</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Deutschlandweit · Kommunen & öffentliche Einrichtungen</p>
+            <p style="font-size: 14px; color: var(--text-light); line-height: 1.7; margin-bottom: 12px;">Stark im kommunalen Bereich – Spielplätze, Parkwege, Schulhöfe. Vollständiger Zyklus: Früherkennung, Nestentfernung, Absaugtechnik, Nachkontrolle. Zertifiziert nach §10 PflSchG.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <span style="background: var(--bg-light); color: var(--text-light); font-size: 11px; padding: 3px 8px; border-radius: 20px;">Kommunalerfahrung</span>
+              <span style="background: var(--bg-light); color: var(--text-light); font-size: 11px; padding: 3px 8px; border-radius: 20px;">§10 PflSchG zertifiziert</span>
+            </div>
+          </div>
+
+          <div style="background: white; border-radius: var(--radius); padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.07); border-top: 3px solid var(--border);">
+            <p style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px;">6. Wespina</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Nordrhein-Westfalen · Privat & Gewerbe</p>
+            <p style="font-size: 14px; color: var(--text-light); line-height: 1.7; margin-bottom: 12px;">Erfahrener Fachbetrieb im Großraum Münster/Westfalen mit solider EPS-Kompetenz. Gute Wahl für Kunden in NRW, die schnelle lokale Reaktion und persönliche Betreuung suchen.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <span style="background: var(--bg-light); color: var(--text-light); font-size: 11px; padding: 3px 8px; border-radius: 20px;">Lokal stark in NRW</span>
+              <span style="background: var(--bg-light); color: var(--text-light); font-size: 11px; padding: 3px 8px; border-radius: 20px;">Zertifizierter Fachbetrieb</span>
+            </div>
+          </div>
+
+        </div>
+
+        <p style="font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.7;">Hinweis: Diese Liste erhebt keinen Anspruch auf Vollständigkeit. Alle genannten Anbieter sind zertifizierte Fachbetriebe nach deutschem Pflanzenschutzrecht. Für flächige Objekte oder Portfolio-Kunden empfiehlt sich immer ein spezialisierter Anbieter mit Jahresvertragsmodell.</p>
+
+      </div>
+    </div>
+  </section>
+
   <!-- BIG CTA BEFORE FOOTER -->
   <section class="section" style="background: linear-gradient(135deg, var(--primary-green), var(--primary-light)); color: white; text-align: center;">
     <div class="container">
-      <h2 class="section-title" style="color: white;">Bereit für Ihre Rettung?</h2>
-      <p class="section-subtitle" style="color: rgba(255,255,255,0.9); margin-bottom: 30px;">Kostenlose Erstberatung – einfach Formular ausfüllen!</p>
+      <h2 class="section-title" style="color: white;">Die Nester von morgen entstehen gerade jetzt.</h2>
+      <p class="section-subtitle" style="color: rgba(255,255,255,0.9); margin-bottom: 12px;">Im Herbst legen EPS-Falter neue Eier. Wer jetzt handelt, verhindert den Befall des nächsten Frühjahrs.<br>Wer wartet, fängt nächste Saison von vorne an.</p>
+      <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 30px;">✅ Kostenlose Erstberatung &nbsp;·&nbsp; Ganzjahresschutz &nbsp;·&nbsp; Reaktion innerhalb 24h</p>
       <a href="#kontakt" class="btn btn-call">Jetzt Beratung anfordern</a>
     </div>
   </section>
@@ -1374,9 +1703,15 @@
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <a href="#home" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ Home</a>
             <a href="#about" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ Über Uns</a>
+            <a href="#pricing" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ Leistungen & Preise</a>
+            <a href="#kontakt" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ Kontakt</a>
+          </div>
+          <h4 style="font-size: 14px; font-weight: 700; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7;">Wissen</h4>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
             <a href="#services" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ Schädlinge</a>
-            <a href="#cases" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ Fallbeispiele</a>
-            <a href="#pricing" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ Leistungen</a>
+            <a href="#alert" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ Gefahren</a>
+            <a href="#blog" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ Blog</a>
+            <a href="#faq" style="color: white; font-size: 14px; opacity: 0.9; transition: all 0.3s;">→ FAQ</a>
           </div>
         </div>
 
@@ -1480,7 +1815,19 @@
     navLinks.forEach(link => link.addEventListener('click', () => {
       hamburger.classList.remove('active');
       navMenu.classList.remove('active');
+      document.querySelector('.nav-has-sub')?.classList.remove('open');
     }));
+
+    // Wissen-Submenu Toggle (nur Mobile)
+    const wissenToggle = document.getElementById('wissenToggle');
+    if (wissenToggle) {
+      wissenToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const parent = wissenToggle.closest('.nav-has-sub');
+        const isOpen = parent.classList.toggle('open');
+        wissenToggle.setAttribute('aria-expanded', isOpen);
+      });
+    }
     document.addEventListener('click', (e) => {
       if (!e.target.closest('nav') && navMenu.classList.contains('active')) {
         hamburger.classList.remove('active');
@@ -1632,6 +1979,38 @@
       gtag('consent', 'update', { analytics_storage: 'granted' });
       loadGA();
     }
+  </script>
+
+  <!-- HERO SLIDER LOGIC -->
+  <script>
+    (function() {
+      const slides = document.querySelectorAll('.hero-slide');
+      const dots   = document.querySelectorAll('.slider-dot');
+      let current  = 0;
+      let timer;
+
+      function heroGoTo(idx) {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = (idx + slides.length) % slides.length;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+        resetTimer();
+      }
+
+      function heroShift(dir) { heroGoTo(current + dir); }
+
+      function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(function() { heroGoTo(current + 1); }, 6000);
+      }
+
+      // Expose for onclick
+      window.heroGoTo  = heroGoTo;
+      window.heroShift = heroShift;
+
+      resetTimer();
+    })();
   </script>
 
 </body>
