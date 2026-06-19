@@ -170,21 +170,23 @@ def _build_index_card_in_html(slug: str, title: str, draft_content: str) -> str:
     # Neueste Karte als erste Karte einfuegen (count=1: nur erster Treffer, T-04-15)
     index_html = index_html.replace(GRID_ANCHOR, GRID_ANCHOR + card_html, 1)
 
-    # Startseite begrenzen: nur die neuesten MAX_HOME_CARDS Auto-Posts behalten.
-    # Aeltere Auto-Karten werden von der Startseite entfernt — die Posts bleiben
-    # live erreichbar und in sitemap.xml, nur nicht mehr auf der Startseite.
-    # Maltes handgepflegte Karten haben kein ARTIKEL-START/END und bleiben unberuehrt.
-    # ponytail: Marker-Paar als Delimiter statt HTML-Parsing. Karten aus der Zeit
-    # vor diesem Feature (altes <!-- ARTIKEL: --> ohne END) zaehlen nicht mit.
-    MAX_HOME_CARDS = 6
+    # Startseite auf hoechstens MAX_TOTAL_CARDS Karten begrenzen. Gezaehlt werden
+    # ALLE Karten (Maltes handgemachte + automatische) ueber den Link 'href="blog-'
+    # (kommt genau einmal pro Karte vor). Entfernt werden NUR Auto-Karten mit
+    # ARTIKEL-START/END-Marker, aelteste zuerst — Maltes Karten und Alt-Format-
+    # Karten ohne Marker bleiben immer stehen.
+    MAX_TOTAL_CARDS = 9
+    grid_start = index_html.find(GRID_ANCHOR)
     blocks = list(_re.finditer(
         r"\n        <!-- ARTIKEL-START:.*?<!-- ARTIKEL-END -->",
         index_html, _re.DOTALL,
     ))
-    # blocks sind in Dokumentreihenfolge = neueste -> aelteste (neueste wird oben
-    # eingefuegt). Alles ab Index MAX_HOME_CARDS ist zu alt; von hinten loeschen,
-    # damit die frueheren Match-Offsets gueltig bleiben.
-    for m in reversed(blocks[MAX_HOME_CARDS:]):
+    # blocks in Dokumentreihenfolge = neueste -> aelteste. Aelteste (am Ende) zuerst
+    # entfernen, bis die Gesamtzahl <= MAX_TOTAL_CARDS ist. Von hinten loeschen haelt
+    # die frueheren Match-Offsets gueltig.
+    for m in reversed(blocks):
+        if index_html.count('href="blog-', grid_start) <= MAX_TOTAL_CARDS:
+            break
         index_html = index_html[:m.start()] + index_html[m.end():]
     return index_html
 
