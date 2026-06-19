@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # scripts/ importierba
 
 from news_scraper import collect_hits, forced_evergreen_hit
 from content_generator import generate_post
-from html_assembler import assemble_draft
+from html_assembler import assemble_draft, resolve_hero
 from github_api import push_file
 from telegram_bot import send_draft_message, send_post_text, send_message
 from pending_state import write_pending
@@ -38,7 +38,8 @@ def main() -> None:
         post = generate_post(hits)
         print(f"  Titel: {post.get('title')}")
 
-        draft_path = assemble_draft(post)
+        hero_image = resolve_hero(post.get("hero_keyword", ""))
+        draft_path = assemble_draft(post, hero_image=hero_image)
         name = Path(draft_path).name  # "draft-YYYY-MM-DD.html"
 
         # Schritt 1: Draft via GitHub Contents-API auf main pushen (Single-File-Push)

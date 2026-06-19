@@ -73,7 +73,13 @@ einer H2-Ueberschrift; mehrere Absaetze innerhalb eines Abschnitts mit Leerzeile
 ein kurzer wichtiger Hinweis-Satz fuer eine hervorgehobene Box.
 
 WICHTIG (Rechtssicherheit): Schreibe alle Inhalte VOLLSTAENDIG in eigenen Worten um. \
-Zitiere KEINE Originaltexte. Keine Verleumdung von Firmen oder Personen."""
+Zitiere KEINE Originaltexte. Keine Verleumdung von Firmen oder Personen.
+
+Fuer 'hero_keyword': Waehle GENAU EIN passendes Stichwort aus dieser Liste, das zum \
+Thema des Posts passt: eiche, wald, baum, saison, standard, familie, kinder, garten, \
+haustiere, hund, katze, tier, kind, schule, spielplatz, kindergarten, kita, mallorca, \
+palme, palmenzuensler, buero, gewerbe, betrieb, arbeitsschutz, office, firma, drohne, \
+inspektion, umwelt, natur, finca, urlaub. Das Feld steuert nur die Bildauswahl."""
 
 # Erzwingt gueltige JSON-Struktur (Anthropic Structured Outputs) — kein fragiles Text-Parsen.
 POST_SCHEMA = {
@@ -96,8 +102,9 @@ POST_SCHEMA = {
             },
         },
         "highlight": {"type": "string"},
+        "hero_keyword": {"type": "string"},
     },
-    "required": ["title", "tag", "meta_description", "intro", "sections", "highlight"],
+    "required": ["title", "tag", "meta_description", "intro", "sections", "highlight", "hero_keyword"],
     "additionalProperties": False,
 }
 
@@ -115,7 +122,13 @@ zum Thema: "{topic}".
 informieren und zur kostenlosen Erstberatung fuehren. Liefere 3-4 inhaltliche Abschnitte \
 (sections) mit je einer H2-Ueberschrift; mehrere Absaetze mit Leerzeile (\\n\\n) trennen. \
 'tag' kurzes Label wie 'EPS-Ratgeber', 'meta_description' max ~155 Zeichen, 'highlight' ein \
-kurzer wichtiger Hinweis-Satz. Schreibe vollstaendig in eigenen Worten."""
+kurzer wichtiger Hinweis-Satz. Schreibe vollstaendig in eigenen Worten.
+
+Fuer 'hero_keyword': Waehle GENAU EIN passendes Stichwort aus dieser Liste: eiche, wald, \
+baum, saison, standard, familie, kinder, garten, haustiere, hund, katze, tier, kind, schule, \
+spielplatz, kindergarten, kita, mallorca, palme, palmenzuensler, buero, gewerbe, betrieb, \
+arbeitsschutz, office, firma, drohne, inspektion, umwelt, natur, finca, urlaub. \
+Das Feld steuert nur die Bildauswahl."""
 
 
 def generate_post(hits: list[dict]) -> dict:
