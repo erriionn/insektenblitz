@@ -153,6 +153,22 @@ def collect_hits(max_hits: int = 5, hours: int = 48) -> list[dict]:
     return [{"title": topic, "url": "", "summary": "", "published": "", "source_label": "", "evergreen": True}]
 
 
+def forced_evergreen_hit(topic: str) -> list[dict]:
+    """Erzwingt ein Evergreen-Hit-Dict mit gegebenem Titel (Demo-Themensteuerung).
+
+    Liefert exakt das Schema des Evergreen-Branches aus collect_hits, aber mit dem
+    uebergebenen topic statt dem datums-rotierten EVERGREEN_TOPICS-Eintrag. So sind
+    die 3 Nachweis-Posts sichtbar verschieden (workflow_dispatch-Input 'thema').
+
+    Args:
+        topic: Der erzwungene Post-Titel (nicht-leerer String).
+
+    Returns:
+        Liste mit genau einem Hit-Dict (evergreen=True), generate_post-kompatibel.
+    """
+    return [{"title": topic, "url": "", "summary": "", "published": "", "source_label": "", "evergreen": True}]
+
+
 if __name__ == "__main__":
     found = collect_hits()
     if found and found[0].get("evergreen"):
