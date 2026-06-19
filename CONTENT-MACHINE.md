@@ -13,7 +13,10 @@ hier: Claude) einen fertigen Blogpost-Entwurf schreiben und schickt dir eine
 **Vorschau per Telegram** (Messenger-App). Du prüfst den Entwurf und entscheidest
 per Knopfdruck:
 
-- **Freigeben** → der Beitrag geht sofort live auf der Website.
+- **Freigeben** → der Beitrag wird veröffentlicht (beim nächsten Prüf-Lauf, der alle
+  15 Minuten läuft — oder sofort von Hand, siehe Abschnitt 3). Er erscheint dann auf
+  der Website, wird automatisch auf der **Startseite** verlinkt und in die
+  **Google-Sitemap** eingetragen; du bekommst eine Telegram-Nachricht mit klickbarem Link.
 - **Verwerfen** → der Entwurf wird gelöscht, nichts wird veröffentlicht.
 
 Nichts wird ohne deine Freigabe veröffentlicht. Du behältst immer die Kontrolle.
@@ -48,11 +51,21 @@ im sichtbaren Code.
 
 ## 3. Betrieb: so läuft es im Alltag
 
-**Automatisch (täglich):** Das System startet jeden Tag um **06:00 UTC**
-(= 08:00 Uhr deutsche Sommerzeit) von selbst und schickt dir die Vorschau.
-Du musst dafür nichts tun.
+**Automatisch (täglich):** Das System startet jeden Tag um **06:07 UTC**
+(= 08:07 Uhr deutsche Sommerzeit) von selbst und schickt dir die Vorschau.
+Du musst dafür nichts tun. Nach jedem Lauf kommt zusätzlich eine kurze
+**„Lauf OK"-Nachricht** in Telegram (so siehst du, dass die Automatik läuft) —
+bei einem Fehler stattdessen eine Fehlermeldung.
 
-**Manuell starten (jederzeit):** Wenn du sofort einen neuen Beitrag erzeugen willst:
+**Manuell starten (jederzeit) — zwei Wege:**
+
+*Weg 1 — per Telegram (am bequemsten):* Schick dem Bot einfach **`/neuerpost`**
+(oder **`/neuerpost Goldafter`** für ein bestimmtes Thema). Der Befehl wird beim
+nächsten Post-Approval-Check-Lauf erkannt (alle 15 Minuten) und startet dann die
+Generierung. Aus Sicherheitsgründen funktioniert das **nur von deiner eigenen
+Chat-ID** — niemand sonst kann auf deine Kosten einen Beitrag auslösen.
+
+*Weg 2 — über GitHub Actions:*
 1. Auf GitHub oben auf den Tab **Actions** klicken.
 2. Links den Ablauf **Daily Content** wählen.
 3. Rechts auf **Run workflow** klicken.
@@ -60,10 +73,13 @@ Du musst dafür nichts tun.
 5. Grünen **Run workflow**-Knopf drücken → kurz warten → die Vorschau kommt per Telegram.
 
 **Freigeben oder Verwerfen:** In der Telegram-Vorschau auf **Freigeben** oder
-**Verwerfen** tippen. Es gibt einen zweiten Ablauf namens **Post Approval Check**,
-der alle 15 Minuten automatisch prüft, ob du geklickt hast, und die Aktion ausführt.
-Du kannst ihn (genau wie oben unter Actions → **Post Approval Check** → **Run workflow**)
-auch sofort von Hand auslösen, wenn du nicht bis zu 15 Minuten warten willst.
+**Verwerfen** tippen. Ein zweiter Ablauf namens **Post Approval Check** prüft
+automatisch, ob du geklickt hast, und führt die Aktion aus. Er ist auf alle
+15 Minuten eingestellt — GitHub kann diese automatischen Läufe bei kostenlosen
+Projekten aber verzögern; in der Praxis kann es daher **bis zu ~1 Stunde** dauern,
+bis ein freigegebener Beitrag von allein online ist (für einen Blog völlig in Ordnung).
+**Soll es sofort gehen** (z. B. bei einer Vorführung), löse den Check von Hand aus:
+Actions → **Post Approval Check** → **Run workflow** → in Sekunden live.
 
 ---
 
@@ -80,8 +96,14 @@ Häufige Ursachen:
 - Das **ANTHROPIC_API_KEY**-Guthaben ist leer → in der Anthropic Console prüfen.
 
 **Freigabe-Klick passiert nichts?**
-- Bis zu 15 Minuten warten (der Check läuft im 15-Minuten-Takt), **oder**
+- Bis zu 15 Minuten warten (der Check läuft im 15-Minuten-Takt, manchmal später), **oder**
 - unter Actions → **Post Approval Check** → **Run workflow** den Check sofort starten.
+- **Häufigste Ursache:** Läuft auf einem Rechner noch ein **lokales Bot-Programm**
+  (ein offenes `python`-Fenster mit dem Bot)? Telegram liefert jeden Klick **nur
+  einmal** aus — ein lokales Programm fängt ihn ab, bevor die Cloud ihn sieht, und der
+  Check meldet dann „Keine Updates". Im Betrieb deshalb **kein lokales Bot-Programm
+  laufen lassen** (im Task-Manager prüfen, dass kein `python.exe` aktiv ist), dann erneut
+  freigeben und den Check starten.
 
 ---
 
