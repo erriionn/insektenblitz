@@ -185,7 +185,8 @@ def _do_approve(state: dict) -> str:
     Returns:
         Echter Titel des Posts (aus <h1>), Fallback = state["slug"].
     """
-    final = final_filename(state["slug"])
+    slug = state["slug"]
+    final = final_filename(slug)
     draft = state["draft_filename"]
 
     print(f"  Approve: lese Draft '{draft}' von main ...")
