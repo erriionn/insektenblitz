@@ -13,6 +13,12 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE_FILE = REPO_ROOT / "blog-eps-buerogebaeude.html"
+# Style/Nav/Footer kommen aus TEMPLATE_FILE (Maltes neue Optik, 04-05). Die CTA-Box
+# ziehen wir bewusst aus blog-eps-saison.html: dort steht Maltes Standard-CTA mit
+# Telefon-Button ("📞 ... anrufen"), die 3 von 4 Posts nutzen. buerogebaeude hat eine
+# abweichende "Jetzt Termin vereinbaren"-Variante. Klassen (.cta-box/.btn) sind in
+# TEMPLATE_FILE gestylt -> die saison-CTA rendert korrekt mit der neuen Optik.
+CTA_SOURCE_FILE = REPO_ROOT / "blog-eps-saison.html"
 DOMAIN = "https://insektenblitz.com"
 
 _MONTHS_DE = [
@@ -65,7 +71,7 @@ def resolve_hero(keyword: str) -> str:
 def _extract(pattern: str, text: str, what: str) -> str:
     m = re.search(pattern, text, re.S)
     if not m:
-        sys.exit(f"Template-Block '{what}' nicht in blog-eps-buerogebaeude.html gefunden.")
+        sys.exit(f"Template-Block '{what}' nicht im Quell-HTML gefunden.")
     return m.group(0)
 
 
@@ -83,7 +89,9 @@ def assemble_draft(post: dict, hero_image: str = "images/blog-1-eiche.jpg") -> s
     style = _extract(r"<style>.*?</style>", tpl, "style")
     nav = _extract(r"<nav>.*?</nav>", tpl, "nav")
     footer = _extract(r"<footer>.*?</footer>", tpl, "footer")
-    cta = _extract(r'<div class="cta-box">.*?</div>', tpl, "cta-box")
+    # CTA aus der dedizierten Quelle (Maltes Telefon-Button-Standard), nicht aus tpl.
+    cta_src = CTA_SOURCE_FILE.read_text(encoding="utf-8")
+    cta = _extract(r'<div class="cta-box">.*?</div>', cta_src, "cta-box")
 
     title = html.escape(post.get("title", "EPS-Update"))
     tag = html.escape(post.get("tag", "EPS-Wissen"))
