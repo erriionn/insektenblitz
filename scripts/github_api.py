@@ -20,7 +20,17 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 def _load_secret(key_name: str) -> str:
-    """Laedt einen Secret-Wert: erst os.environ, dann .env-Datei, sonst sys.exit."""
+    """Laedt einen Secret-Wert: erst os.environ, dann .env-Datei, sonst sys.exit.
+
+    Im GitHub-Actions-Kontext (D-06) werden GH_PAT/GH_REPO auf die eingebauten
+    GITHUB_TOKEN/GITHUB_REPOSITORY gemappt — so pusht der Code ohne langlebiges
+    PAT. Faellt der Actions-Wert leer aus, greift der normale Pfad unten.
+    """
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        if key_name == "GH_PAT" and os.environ.get("GITHUB_TOKEN"):
+            return os.environ.get("GITHUB_TOKEN")
+        if key_name == "GH_REPO" and os.environ.get("GITHUB_REPOSITORY"):
+            return os.environ.get("GITHUB_REPOSITORY")
     val = os.environ.get(key_name)
     if val:
         return val
