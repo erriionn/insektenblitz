@@ -58,6 +58,7 @@ def send_draft_message(
     slug: str,
     title: str,
     meta_desc: str = "",
+    cost_eur: "float | None" = None,
 ) -> dict:
     """Schickt Approve/Reject-Vorschau-Nachricht an TELEGRAM_CHAT_ID.
 
@@ -69,6 +70,7 @@ def send_draft_message(
         slug:           URL-Slug des Posts (z.B. "eps-bekampfung-2026").
         title:          Titel des Posts.
         meta_desc:      Optionale Kurzbeschreibung fuer den Nachrichtentext.
+        cost_eur:       Optionale Kosten-Schaetzung in Euro (D-11). Fehlt -> keine Kosten-Zeile.
 
     Returns:
         result-dict aus der Telegram-API-Antwort (enthaelt u.a. message_id).
@@ -92,6 +94,9 @@ def send_draft_message(
     ]
     if meta_desc:
         lines += ["", html.escape(meta_desc)]
+    # D-11: Kosten-Zeile nur wenn cost_eur vorhanden (kein Crash bei fehlendem Wert)
+    if cost_eur is not None:
+        lines += ["", f"Generierung: ~{cost_eur:.2f} €"]
 
     text = "\n".join(lines)
 

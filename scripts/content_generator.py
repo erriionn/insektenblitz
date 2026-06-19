@@ -206,6 +206,16 @@ def generate_post(hits: list[dict]) -> dict:
         sys.exit("Claude-Antwort enthielt keinen Text-Block — Generierung abgebrochen.")
     post = json.loads(text)
 
+    # D-11: Kosten-Schaetzung aus msg.usage (Sonnet-4.6: $3/MTok input, $15/MTok output).
+    # Defensiv: falls msg.usage fehlt oder unvollstaendig, keinen Crash ausloesen.
+    try:
+        input_tok = msg.usage.input_tokens
+        output_tok = msg.usage.output_tokens
+        kosten_usd = (input_tok / 1_000_000 * 3.0) + (output_tok / 1_000_000 * 15.0)
+        post["cost_eur"] = round(kosten_usd * 0.93, 3)  # USD->EUR-Faktor 0.93 (statisch)
+    except Exception:
+        pass  # cost_eur bleibt weg; keine Kosten-Zeile in der Vorschau (kein Crash)
+
     post["slug"] = _unique_slug(_slugify(post.get("title", "")))
     post["sources"] = sources
     return post
