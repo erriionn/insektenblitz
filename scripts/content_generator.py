@@ -167,10 +167,15 @@ def _call_claude(client: anthropic.Anthropic, **kwargs) -> anthropic.types.Messa
     return client.messages.create(**kwargs)
 
 
-def generate_post(hits: list[dict]) -> dict:
+def generate_post(hits: list[dict], published_titles: "list | None" = None) -> dict:
     """Treffer -> Post-dict (title, slug, tag, meta_description, intro, sections, highlight, sources).
 
     `sources` ist eine Liste von {"url", "label"} (label = Medienname/Reddit). Bei Evergreen leer.
+
+    Args:
+        hits:             Liste von News-Treffern (oder Evergreen-Hit).
+        published_titles: Bereits veroeffentlichte Post-Titel fuer Duplikat-Vermeidung (D-07).
+                          Wenn nicht-leer, erhaelt Claude einen Anti-Duplikat-Block im Prompt.
     """
     key = _load_api_key()
     hits = [h for h in hits if h.get("title")][:MAX_HITS]
@@ -180,6 +185,16 @@ def generate_post(hits: list[dict]) -> dict:
     today_str = date.today().strftime("%d.%m.%Y")
     year = date.today().year
     evergreen = bool(hits[0].get("evergreen"))
+
+    # D-07: Anti-Duplikat-Block fuer Claude (nur wenn Titel vorliegen)
+    anti_dup_block = ""
+    if published_titles:
+        titles_list = "\n".join(f"- {t}" for t in published_titles)
+        anti_dup_block = (
+            f"\n\nBereits veroeffentlichte Themen (NICHT wiederholen, neuen Blickwinkel waehlen):\n"
+            f"{titles_list}"
+        )
+
     if evergreen:
         prompt = EVERGREEN_PROMPT.format(topic=hits[0]["title"], today=today_str, year=year)
         sources = []  # keine echten Quellen -> HTML laesst den Block weg
@@ -191,6 +206,10 @@ def generate_post(hits: list[dict]) -> dict:
             for h in hits
             if h.get("url")
         ]
+
+    # Anti-Duplikat-Block an den Prompt anhaengen (beide Prompt-Typen)
+    if anti_dup_block:
+        prompt += anti_dup_block
 
     client = anthropic.Anthropic(api_key=key)
     msg = _call_claude(

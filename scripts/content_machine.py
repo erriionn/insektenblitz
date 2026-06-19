@@ -12,12 +12,56 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # scripts/ importierbar machen
 
+import requests
+
 from news_scraper import collect_hits, forced_evergreen_hit
 from content_generator import generate_post
 from html_assembler import assemble_draft, resolve_hero
-from github_api import push_file
+from github_api import push_file, _load_secret, _get_headers
 from telegram_bot import send_draft_message, send_post_text, send_message
 from pending_state import write_pending
+
+
+def _published_titles() -> list:
+    """D-07: Liest die Titel bereits veroeffentlichter blog-*.html aus dem Repo.
+
+    Listet das Repo-Root via GitHub Contents-API (analog zu _find_draft_in_repo in
+    telegram_check.py), filtert auf blog-*.html und leitet einen lesbaren Titel aus
+    dem Dateinamen-Slug ab (kein zusaetzlicher API-Call pro Datei — reicht als
+    Anti-Duplikat-Signal fuer Claude). Auf die letzten 20 Posts begrenzt.
+
+    Bei Netzfehler oder API-Fehler: tolerant, gibt leere Liste zurueck — die
+    Generierung darf nicht am Gedaechtnis-Lookup scheitern (T-04-23).
+
+    Returns:
+        Liste lesbarer Titel-Strings (aus den Dateinamen abgeleitet).
+    """
+    try:
+        repo = _load_secret("GH_REPO")
+        pat = _load_secret("GH_PAT")
+        url = f"https://api.github.com/repos/{repo}/contents/"
+        resp = requests.get(url, headers=_get_headers(pat), timeout=15)
+        if not resp.ok:
+            print(f"  _published_titles: Contents-API {resp.status_code} — leere Titelliste.")
+            return []
+        files = [
+            f["name"]
+            for f in resp.json()
+            if f.get("type") == "file" and f["name"].startswith("blog-") and f["name"].endswith(".html")
+        ]
+        # Alphabetisch absteigend (chronologisch, neueste zuerst); letzten 20 Posts
+        files.sort(reverse=True)
+        files = files[:20]
+        # Slug -> lesbarer Titel: "blog-eps-bekampfung-2026.html" -> "eps bekampfung 2026"
+        titles = []
+        for fname in files:
+            slug = fname[len("blog-"):-len(".html")]
+            title = slug.replace("-", " ")
+            titles.append(title)
+        return titles
+    except Exception as exc:
+        print(f"  _published_titles: Fehler beim Repo-Listing ({type(exc).__name__}) — leere Titelliste.")
+        return []
 
 
 def main() -> None:
@@ -35,7 +79,12 @@ def main() -> None:
         print(f"{len(hits)} Treffer (Google News + Reddit, 24-48h) — generiere Post mit Claude ...")
 
     try:
-        post = generate_post(hits)
+        # D-07: Themen-Gedaechtnis — publizierte Titel aus dem Repo lesen
+        pub_titles = _published_titles()
+        if pub_titles:
+            print(f"  Themen-Gedaechtnis: {len(pub_titles)} bereits veroeffentlichte Posts geladen.")
+
+        post = generate_post(hits, published_titles=pub_titles)
         print(f"  Titel: {post.get('title')}")
 
         # Pre-flight: callback_data "approve:{slug}" und "reject:{slug}" muessen
@@ -64,7 +113,10 @@ def main() -> None:
 
         # Schritt 2b: Telegram-Vorschau mit Approve/Reject-Buttons senden
         print("Sende Telegram-Vorschau ...")
-        send_draft_message(name, post["slug"], post["title"], post.get("meta_description", ""))
+        send_draft_message(
+            name, post["slug"], post["title"], post.get("meta_description", ""),
+            cost_eur=post.get("cost_eur"),  # D-11: Kosten-Zeile in der Vorschau
+        )
 
         # Schritt 3: Pending-State fuer Skript B (telegram_check.py) speichern
         # message_id und offset entfernt (D-14): telegram_check.py ist state-frei
