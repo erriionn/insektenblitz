@@ -13,6 +13,7 @@ from pathlib import Path
 
 import anthropic
 from github_api import get_file_sha
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 MODEL = "claude-sonnet-4-6"
 MAX_HITS = 5  # Skeleton: Top-Treffer; Plan 01-2 filtert/reduziert sauber vor.
@@ -150,6 +151,22 @@ arbeitsschutz, office, firma, drohne, inspektion, umwelt, natur, finca, urlaub. 
 Das Feld steuert nur die Bildauswahl."""
 
 
+@retry(
+    stop=stop_after_attempt(2),
+    wait=wait_exponential(min=5, max=20),
+    retry=retry_if_exception_type(Exception),
+    reraise=True,
+)
+def _call_claude(client: anthropic.Anthropic, **kwargs) -> anthropic.types.Message:
+    """Wrappt client.messages.create mit Retry/Backoff (2 Versuche, 5-20s Wartezeit).
+
+    Claude-Calls sind teuer -> nur 2 Versuche. reraise=True: nach Erschoepfung
+    der Versuche wird die originale Exception weitergegeben (sys.exit bleibt erhalten).
+    msg.usage ist auf dem zurueckgegebenen Message-Objekt weiterhin verfuegbar (04-09).
+    """
+    return client.messages.create(**kwargs)
+
+
 def generate_post(hits: list[dict]) -> dict:
     """Treffer -> Post-dict (title, slug, tag, meta_description, intro, sections, highlight, sources).
 
@@ -176,7 +193,8 @@ def generate_post(hits: list[dict]) -> dict:
         ]
 
     client = anthropic.Anthropic(api_key=key)
-    msg = client.messages.create(
+    msg = _call_claude(
+        client,
         model=MODEL,
         max_tokens=3000,
         output_config={"format": {"type": "json_schema", "schema": POST_SCHEMA}},

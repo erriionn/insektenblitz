@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 import requests
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -55,6 +56,22 @@ def _get_headers(pat: str) -> dict:
     }
 
 
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(min=2, max=8),
+    retry=retry_if_exception_type((requests.Timeout, requests.ConnectionError)),
+    reraise=True,
+)
+def _http_get(url: str, headers: dict, params: dict | None = None, timeout: int = 20) -> requests.Response:
+    """GET-Request mit Retry/Backoff bei Timeout/ConnectionError (3 Versuche, 2-8s).
+
+    reraise=True: nach Erschoepfung der Versuche wirft die originale Exception.
+    HTTPError (4xx/5xx) wird NICHT retried — das sind keine transienten Fehler.
+    """
+    resp = requests.get(url, headers=headers, params=params, timeout=timeout)
+    return resp
+
+
 def get_file_sha(path: str) -> "str | None":
     """SHA einer bestehenden Datei auf main zurueckgeben, oder None bei 404.
 
@@ -68,12 +85,7 @@ def get_file_sha(path: str) -> "str | None":
     repo = _load_secret("GH_REPO")
     url = f"https://api.github.com/repos/{repo}/contents/{path}"
     try:
-        resp = requests.get(
-            url,
-            headers=_get_headers(pat),
-            params={"ref": "main"},
-            timeout=20,
-        )
+        resp = _http_get(url, headers=_get_headers(pat), params={"ref": "main"}, timeout=20)
         resp.raise_for_status()
         return resp.json()["sha"]
     except requests.HTTPError as e:
@@ -122,6 +134,22 @@ def push_file(path: str, content_bytes: bytes, message: str) -> dict:
     return resp.json()
 
 
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(min=2, max=8),
+    retry=retry_if_exception_type((requests.Timeout, requests.ConnectionError)),
+    reraise=True,
+)
+def _http_request(method: str, url: str, headers: dict, timeout: int = 30, **kwargs) -> requests.Response:
+    """requests.request mit Retry/Backoff fuer commit_files-_call (Timeout/ConnectionError).
+
+    reraise=True: sys.exit-Verhalten bei echten Fehlern (nach reraise) bleibt unveraendert.
+    HTTPError (4xx/5xx) wird NICHT retried (kein transienter Fehler).
+    """
+    resp = requests.request(method, url, headers=headers, timeout=timeout, **kwargs)
+    return resp
+
+
 def commit_files(changes: list, message: str) -> None:
     """Schreibt mehrere Datei-Aenderungen in EINEM Commit auf main via Git Data API.
 
@@ -154,7 +182,7 @@ def commit_files(changes: list, message: str) -> None:
 
     def _call(method: str, url: str, **kwargs) -> dict:
         try:
-            resp = requests.request(method, url, headers=headers, timeout=30, **kwargs)
+            resp = _http_request(method, url, headers=headers, timeout=30, **kwargs)
             resp.raise_for_status()
         except requests.HTTPError as e:
             sys.exit(f"GitHub API Fehler: {e.response.status_code} — {e.response.text[:200]}")
@@ -271,12 +299,7 @@ def get_text_file(path: str) -> str:
     url = f"https://api.github.com/repos/{repo}/contents/{path}"
 
     try:
-        resp = requests.get(
-            url,
-            headers=_get_headers(pat),
-            params={"ref": "main"},
-            timeout=20,
-        )
+        resp = _http_get(url, headers=_get_headers(pat), params={"ref": "main"}, timeout=20)
         resp.raise_for_status()
     except requests.HTTPError as e:
         sys.exit(f"GitHub API Fehler: {e.response.status_code} — {e.response.text[:200]}")

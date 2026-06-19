@@ -11,6 +11,7 @@ from email.utils import parsedate_to_datetime
 
 import requests
 from defusedxml.ElementTree import fromstring  # haertet gegen XXE/Entity-Bomben (Threat T-01)
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 UA = "insektenblitz-content-bot/0.1 (+https://insektenblitz.com)"
 GOOGLE_NEWS_RSS = "https://news.google.com/rss/search?q={q}&hl=de&gl=DE&ceid=DE:de"
@@ -28,6 +29,23 @@ EVERGREEN_TOPICS = [
 ]
 
 
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(min=2, max=8),
+    retry=retry_if_exception_type((requests.Timeout, requests.ConnectionError)),
+    reraise=True,
+)
+def _fetch_url(url: str, timeout: int = 15) -> requests.Response:
+    """GET-Request mit Retry/Backoff bei Timeout/ConnectionError (3 Versuche, 2-8s Wartezeit).
+
+    reraise=True: nach Auswahl der Versuche wird die originale Exception weitergegeben.
+    Der Evergreen-Fallback in collect_hits faengt sie auf.
+    """
+    resp = requests.get(url, headers={"User-Agent": UA}, timeout=timeout)
+    resp.raise_for_status()
+    return resp
+
+
 def _publisher_from_title(title: str) -> str:
     """Google-News-Titel enden meist mit ' - Medienname' -> als Label nutzen."""
     if " - " in title:
@@ -38,8 +56,7 @@ def _publisher_from_title(title: str) -> str:
 def fetch_google_news(query: str = "Eichenprozessionsspinner") -> list[dict]:
     """Holt EPS-Artikel aus Google News RSS. Liste von {title,url,summary,published,source_label}."""
     url = GOOGLE_NEWS_RSS.format(q=urllib.parse.quote(query))
-    resp = requests.get(url, headers={"User-Agent": UA}, timeout=15)
-    resp.raise_for_status()
+    resp = _fetch_url(url)
     root = fromstring(resp.content)  # wirft bei kaputtem XML — bewusst nicht still
 
     hits = []

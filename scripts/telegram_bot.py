@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 import requests
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TELEGRAM_API = "https://api.telegram.org/bot{token}/{method}"
@@ -34,6 +35,22 @@ def _load_secret(key_name: str) -> str:
             if name.strip() == key_name:
                 return value.strip().strip('"').strip("'")
     sys.exit(f"{key_name} fehlt — bitte in .env setzen (siehe .env.example).")
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(min=2, max=8),
+    retry=retry_if_exception_type(requests.RequestException),
+    reraise=True,
+)
+def _post_telegram(url: str, payload: dict, timeout: int = 15) -> requests.Response:
+    """POST-Request an Telegram-API mit Retry/Backoff (3 Versuche, 2-8s Wartezeit).
+
+    Nur fuer den kritischen send_draft_message-Call verwendet (sys.exit bei Fehler).
+    reraise=True: nach Erschoepfung der Versuche wirft die originale RequestException.
+    Token erscheint nur in der URL (nicht in Logs/Ausgaben) — kein Leak durch reraise.
+    """
+    return requests.post(url, json=payload, timeout=timeout)
 
 
 def send_draft_message(
@@ -95,7 +112,12 @@ def send_draft_message(
         "reply_markup": reply_markup,
     }
 
-    resp = requests.post(url, json=payload, timeout=15)
+    try:
+        resp = _post_telegram(url, payload, timeout=15)
+    except requests.RequestException:
+        # Nach 3 Retries mit reraise: Exception-Meldung darf nie die Token-URL enthalten.
+        # requests.RequestException-Meldungen tragen den URL-String — daher nur Typ loggen.
+        sys.exit("Telegram API Fehler: Netzwerkfehler nach 3 Versuchen (kein Token in Ausgabe).")
     # Kein raise_for_status() hier: das wuerde die nackte HTTPError MIT der
     # Token-URL werfen (Secret-Leak) und Telegrams Klartext-Grund verschlucken.
     # Stattdessen den JSON-Body lesen und "description" ausgeben — ohne Token/URL.
