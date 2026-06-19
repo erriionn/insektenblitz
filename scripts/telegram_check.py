@@ -19,6 +19,8 @@ wird verarbeitet — fremde Klicks werden ignoriert.
 
 Aufruf:  python scripts/telegram_check.py
 """
+import html
+import re
 import sys
 from pathlib import Path
 
@@ -29,8 +31,8 @@ from github_api import commit_files, delete_file, get_text_file
 from html_assembler import final_filename
 
 
-def _do_approve(state: dict) -> None:
-    """Approve-Pfad (D-05): Draft -> blog-[slug].html in EINEM atomaren Commit.
+def _do_approve(state: dict) -> str:
+    """Approve-Pfad (D-05 + D-03 + D-09): Draft -> blog-[slug].html in EINEM atomaren Commit.
 
     Liest den Draft-Inhalt von main (get_text_file), dann ein einziger
     commit_files-Aufruf der gleichzeitig:
@@ -38,12 +40,33 @@ def _do_approve(state: dict) -> None:
       - draft-[datum].html entfernt
     Damit gibt es genau einen Commit und einen Netlify-Deploy — kein
     Teil-Zustand-Fenster, wenn ein zweiter Call fehlschlagen wuerde.
+
+    Neu (04-04):
+      - Extrahiert echten Titel via <h1>-Regex aus Draft-Inhalt (state["title"] = slug, L-05)
+      - D-03-Reset: ersetzt noindex, nofollow durch index, follow im finalen Post-Content
+      - Gibt extrahierten Titel zurueck (fuer Live-Link-Bestaetigungs-Nachricht in main())
+
+    Hinweis: commit_files-Liste als erweiterbare Struktur belassen (04-06 fuegt Sitemap + Index ein).
+
+    Returns:
+        Echter Titel des Posts (aus <h1>), Fallback = state["slug"].
     """
     final = final_filename(state["slug"])
     draft = state["draft_filename"]
 
     print(f"  Approve: lese Draft '{draft}' von main ...")
     content = get_text_file(draft)
+
+    # Titel aus Draft-HTML extrahieren (state["title"] traegt nur den Slug — L-05)
+    m = re.search(r"<h1>(.*?)</h1>", content)
+    title = html.unescape(m.group(1)) if m else state["slug"]
+
+    # D-03-Reset: Draft ist noindex,nofollow (04-02); finaler Post muss index,follow sein
+    content = content.replace(
+        '<meta name="robots" content="noindex, nofollow" />',
+        '<meta name="robots" content="index, follow" />',
+        1,  # maxreplace=1 — nur den ersten Treffer (genau ein robots-Tag pro Seite)
+    )
 
     print(f"  Approve: atomarer Commit ({draft} -> {final}) ...")
     commit_files(
@@ -53,9 +76,10 @@ def _do_approve(state: dict) -> None:
             # Draft entfernen (sha=None im Tree -> Datei geloescht)
             {"path": draft, "delete": True},
         ],
-        f"Blogpost veroeffentlicht: {state['title']}",
+        f"Blogpost veroeffentlicht: {title}",
     )
     print(f"  Approve: '{final}' ist live, Draft entfernt.")
+    return title
 
 
 def _do_reject(state: dict) -> None:
@@ -133,9 +157,15 @@ def main() -> None:
                 print("Kein offener Draft im Repo gefunden.")
                 get_updates(offset=update_id + 1)
                 return
-            _do_approve({"draft_filename": draft, "slug": slug, "title": slug})
+            title = _do_approve({"draft_filename": draft, "slug": slug, "title": slug})
             answer_callback_query(cq["id"], "Veroeffentlicht")
-            send_message(f"✅ Veroeffentlicht: {slug}")
+            # D-09: klickbarer Live-Link (Titel als Link-Text, HTML-escaped; NIE MarkdownV2)
+            site_url = _load_secret("SITE_BASE_URL").rstrip("/")
+            live_url = f"{site_url}/blog-{slug}.html"
+            send_message(
+                f'✅ Veroeffentlicht: <a href="{live_url}">{html.escape(title)}</a>',
+                parse_mode="HTML",
+            )
             get_updates(offset=update_id + 1)  # Q2: sofort bestaetigen = Persistenz
             return
         elif data.startswith("reject:"):
