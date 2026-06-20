@@ -9,6 +9,7 @@ Aufruf:  python scripts/content_machine.py
 import os
 import re
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # scripts/ importierbar machen
@@ -19,8 +20,9 @@ from news_scraper import collect_hits, forced_evergreen_hit
 from content_generator import generate_post
 from html_assembler import assemble_draft, resolve_hero
 from github_api import push_file, _load_secret, _get_headers
-from telegram_bot import send_draft_message, send_post_text, send_message
+from telegram_bot import send_draft_message, send_post_text, send_message, get_updates
 from pending_state import write_pending
+from telegram_check import process_update
 
 
 def _published_titles() -> list:
@@ -135,7 +137,56 @@ def main() -> None:
         print("\nNaechster Schritt: python scripts/telegram_check.py (Plan 02) ausfuehren,")
         print("um die Antwort auszuwerten (Approve -> live / Reject -> loeschen).")
 
-        # D-12: Health-Ping — nur beim daily-content-Lauf (content_machine.main())
+        # ---------------------------------------------------------------------------
+        # Phase 04.1: Nachhoer-Fenster (~5-8 Min) — faengt schnelle Approve/Reject-
+        # Klicks INLINE ab, sodass der Post in Sekunden live geht (statt erst beim
+        # naechsten post-approval-Cron in bis zu 15 Min).
+        #
+        # Kernregeln (AUTO-01..04):
+        #   - KEINE eigene Approve/Reject-Logik hier — ausschliesslich process_update()
+        #     aus telegram_check verwenden (eine Quelle der Wahrheit, T-04.1-01).
+        #   - Offset fortschreiben: Telegram liefert jeden Klick einmal; Fenster +
+        #     Cron koennen denselben Klick NICHT doppelt verarbeiten (T-04.1-03).
+        #   - Tolerant: ein Loop-Fehler darf den bereits gesendeten Vorschau-Lauf
+        #     NICHT abbrechen (T-04.1-02).
+        #   - Health-Ping (D-12) kommt erst nach dem Loop-Exit — immer als letzter Schritt.
+        # ---------------------------------------------------------------------------
+        NACHHOER_BUDGET_S = 7 * 60  # 7 Minuten Gesamtfenster
+        LONG_POLL_S = 25             # Telegram haelt Verbindung fuer 25s offen
+
+        try:
+            own_chat_id = str(_load_secret("TELEGRAM_CHAT_ID"))
+            offset = 0
+            deadline = time.monotonic() + NACHHOER_BUDGET_S
+            print(f"\nNachhoer-Fenster gestartet ({NACHHOER_BUDGET_S // 60} Min) ...")
+
+            while time.monotonic() < deadline:
+                updates = get_updates(offset=offset, long_poll=LONG_POLL_S)
+                for upd in updates:
+                    update_id = upd.get("update_id", 0)
+                    result = process_update(upd, own_chat_id)
+                    offset = update_id + 1  # Single-Delivery: Offset fortschreiben (T-04.1-03)
+                    if result == "handled":
+                        print("  Nachhoer-Fenster: Approve/Reject erhalten — Loop beendet.")
+                        break
+                else:
+                    # Innere for-Schleife NICHT mit break beendet (kein "handled")
+                    continue
+                # Aeussere while-Schleife verlassen (Approve/Reject erhalten)
+                break
+            else:
+                print("  Nachhoer-Fenster abgelaufen — post-approval-Cron uebernimmt spaete Klicks.")
+
+        except Exception as exc:
+            # Tolerant: Loop-Fehler darf Vorschau-Lauf nicht nachtraeglich abbrechen.
+            # Token-Schwaerzung analog zum bestehenden Fehler-Ping-Block (T-04.1-02).
+            err_msg = f"Nachhoer-Loop-Fehler ({type(exc).__name__}): {str(exc)[:200]}"
+            err_msg = re.sub(r"/bot\d+:[A-Za-z0-9_-]+/", "/bot<redacted>/", err_msg)
+            err_msg = re.sub(r"\d{6,12}:[A-Za-z0-9_-]{30,}", "<redacted-token>", err_msg)
+            err_msg = re.sub(r"(sk-ant-|ghp_|github_pat_)[A-Za-z0-9_-]+", r"\1<redacted>", err_msg)
+            print(f"  WARNUNG: {err_msg} — Vorschau-Lauf bleibt gueltig.")
+
+        # D-12: Health-Ping — erst nach dem Nachhoer-Loop (immer letzter Schritt von main()).
         # post-approval-Lauf ruft telegram_check.py auf, NICHT main() — bleibt ping-frei.
         n_hits = len(hits) if not (hits and hits[0].get("evergreen")) else 0
         send_message(f"Lauf OK — {n_hits} Treffer, Post: {post['title'][:60]}")
