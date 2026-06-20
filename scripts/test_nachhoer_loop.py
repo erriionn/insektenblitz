@@ -268,5 +268,19 @@ class TestNachhoerLoop(unittest.TestCase):
         self.assertTrue(handled, "Frischer Klick im Fenster muss verarbeitet werden")
 
 
+class TestRedaction(unittest.TestCase):
+    """WR-01: Secrets werden VOR dem Kuerzen geschwaerzt (kein Leak durch Schnitt)."""
+
+    def test_token_nahe_position_200_wird_geschwaerzt(self):
+        import content_machine as cm
+        token = "123456789:" + "A" * 40  # realistisches Telegram-Bot-Token-Muster
+        # Token so platzieren, dass es bei "erst [:200], dann schwaerzen" zerschnitten wuerde.
+        raw = ("x" * 190) + token + " danach"
+        out = cm._redact_secrets(raw)[:200]
+        self.assertNotIn(token, out, "Vollstaendiges Token darf nie im Output stehen")
+        self.assertNotIn("123456789:AAAA", out, "Auch kein Token-Anfang darf durchrutschen")
+        self.assertIn("<redacted-token>", cm._redact_secrets(raw))
+
+
 if __name__ == "__main__":
     unittest.main()

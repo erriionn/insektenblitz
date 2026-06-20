@@ -30,6 +30,20 @@ NACHHOER_BUDGET_S = 7 * 60  # 7 Minuten Gesamtfenster
 LONG_POLL_S = 25            # Telegram haelt die Verbindung fuer 25s offen
 
 
+def _redact_secrets(text: str) -> str:
+    """Schwaerzt Secrets in einem Fehlertext (Telegram-Token-URL, Bot-Token, API-Key, PAT).
+
+    WR-01: IMMER auf den vollstaendigen Text anwenden und ERST DANACH kuerzen — sonst
+    koennte ein Kuerzungs-Schnitt mitten in einem Token ein Regex-Muster zerstoeren und
+    ein Teil-Secret durchlassen. Defense-in-Depth: greift nur, falls eine Roh-Exception
+    je ein Secret in str(exc) truege.
+    """
+    text = re.sub(r"/bot\d+:[A-Za-z0-9_-]+/", "/bot<redacted>/", text)
+    text = re.sub(r"\d{6,12}:[A-Za-z0-9_-]{30,}", "<redacted-token>", text)
+    text = re.sub(r"(sk-ant-|ghp_|github_pat_)[A-Za-z0-9_-]+", r"\1<redacted>", text)
+    return text
+
+
 def nachhoer_loop(own_chat_id: str,
                   budget_s: int = NACHHOER_BUDGET_S,
                   long_poll_s: int = LONG_POLL_S) -> bool:
@@ -201,11 +215,10 @@ def main() -> None:
         except Exception as exc:
             # Tolerant: Loop-Fehler darf Vorschau-Lauf nicht nachtraeglich abbrechen.
             # Token-Schwaerzung analog zum bestehenden Fehler-Ping-Block (T-04.1-02).
-            err_msg = f"Nachhoer-Loop-Fehler ({type(exc).__name__}): {str(exc)[:200]}"
-            err_msg = re.sub(r"/bot\d+:[A-Za-z0-9_-]+/", "/bot<redacted>/", err_msg)
-            err_msg = re.sub(r"\d{6,12}:[A-Za-z0-9_-]{30,}", "<redacted-token>", err_msg)
-            err_msg = re.sub(r"(sk-ant-|ghp_|github_pat_)[A-Za-z0-9_-]+", r"\1<redacted>", err_msg)
-            print(f"  WARNUNG: {err_msg} — Vorschau-Lauf bleibt gueltig.")
+            # WR-01: erst schwaerzen, dann kuerzen (kein Token-Leak durch Kuerzungs-Schnitt).
+            detail = _redact_secrets(str(exc))[:200]
+            print(f"  WARNUNG: Nachhoer-Loop-Fehler ({type(exc).__name__}): {detail} — "
+                  f"Vorschau-Lauf bleibt gueltig.")
 
         # D-12: Health-Ping — erst nach dem Nachhoer-Loop (immer letzter Schritt von main()).
         # post-approval-Lauf ruft telegram_check.py auf, NICHT main() — bleibt ping-frei.
@@ -214,14 +227,9 @@ def main() -> None:
 
     except Exception as exc:
         try:
-            msg = f"FEHLER im Generierungslauf: {type(exc).__name__}: {str(exc)[:200]}"
-            # Sicherheit (Defense-in-Depth): niemals ein Secret in der Fehlernachricht
-            # durchlassen — Telegram-Token-URL, Bot-Token, API-Key oder PAT schwaerzen,
-            # falls eine Roh-Exception sie je in str(exc) truege.
-            msg = re.sub(r"/bot\d+:[A-Za-z0-9_-]+/", "/bot<redacted>/", msg)
-            msg = re.sub(r"\d{6,12}:[A-Za-z0-9_-]{30,}", "<redacted-token>", msg)
-            msg = re.sub(r"(sk-ant-|ghp_|github_pat_)[A-Za-z0-9_-]+", r"\1<redacted>", msg)
-            send_message(msg)
+            # WR-01: erst schwaerzen, dann kuerzen (kein Token-Leak durch Kuerzungs-Schnitt).
+            detail = _redact_secrets(str(exc))[:200]
+            send_message(f"FEHLER im Generierungslauf: {type(exc).__name__}: {detail}")
         except Exception:
             pass
         raise
