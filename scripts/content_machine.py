@@ -7,6 +7,7 @@ Die Antwort-Auswertung (Approve/Reject) folgt in Plan 02 (telegram_check.py — 
 Aufruf:  python scripts/content_machine.py
 """
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -141,9 +142,14 @@ def main() -> None:
 
     except Exception as exc:
         try:
-            send_message(
-                f"FEHLER im Generierungslauf: {type(exc).__name__}: {str(exc)[:200]}"
-            )
+            msg = f"FEHLER im Generierungslauf: {type(exc).__name__}: {str(exc)[:200]}"
+            # Sicherheit (Defense-in-Depth): niemals ein Secret in der Fehlernachricht
+            # durchlassen — Telegram-Token-URL, Bot-Token, API-Key oder PAT schwaerzen,
+            # falls eine Roh-Exception sie je in str(exc) truege.
+            msg = re.sub(r"/bot\d+:[A-Za-z0-9_-]+/", "/bot<redacted>/", msg)
+            msg = re.sub(r"\d{6,12}:[A-Za-z0-9_-]{30,}", "<redacted-token>", msg)
+            msg = re.sub(r"(sk-ant-|ghp_|github_pat_)[A-Za-z0-9_-]+", r"\1<redacted>", msg)
+            send_message(msg)
         except Exception:
             pass
         raise
