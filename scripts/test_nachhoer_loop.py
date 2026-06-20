@@ -1,11 +1,15 @@
 """Behavior-Tests fuer den Nachhoer-Loop (Phase 04.1, Plan 01, Task 3).
 
+Die Loop-Tests rufen die ECHTE content_machine.nachhoer_loop() auf (kein Nachbau),
+damit Regressionen im Produktionscode auffallen.
+
 Prueft:
   1. Approve im Fenster -> _do_approve genau einmal, Loop endet terminal (AUTO-01)
   2. Reject im Fenster -> _do_reject genau einmal, nichts live, Loop endet (AUTO-02)
   3. Fremde Chat-ID ignoriert -> weder _do_approve noch _do_reject (AUTO-04)
   4. Timeout sauber -> Loop endet ohne Exception, _do_approve/_do_reject nie (AUTO-03)
-  5. Keine Doppelverarbeitung -> _do_approve genau einmal trotz mehrerer Iterationen (AUTO-03)
+  5. Keine Doppelverarbeitung -> _do_approve genau einmal, Offset fortgeschrieben (AUTO-03)
+  6. WR-02: Stale Backlog-Klick loest den neuen Post NICHT aus; frischer Klick schon.
 
 Alle externen Effekte sind gemockt (kein Netz, kein Repo, kein Telegram).
 Aufruf: python -m unittest scripts.test_nachhoer_loop -v
@@ -132,22 +136,19 @@ class TestProcessUpdate(unittest.TestCase):
 # Tests fuer den Nachhoer-Loop in content_machine (Verhalten des Loops)
 # ---------------------------------------------------------------------------
 
-def _run_loop_with_updates(updates_sequence, budget_s=0.2, long_poll_s=0):
-    """Hilfsfunktion: fuehrt den Nachhoer-Loop-Block aus content_machine isoliert aus.
+def _run_loop_with_updates(updates_sequence, backlog=None, budget_s=0.2, long_poll_s=0):
+    """Fuehrt den ECHTEN content_machine.nachhoer_loop() mit gemockten Abhaengigkeiten aus.
 
-    Mockt alle Abhaengigkeiten. Gibt (m_approve, m_reject, n_get_updates_calls) zurueck.
+    Testet damit den Produktionscode selbst (nicht eine Nachbildung) — siehe IN-01.
 
-    updates_sequence: Liste von Listen — jede innere Liste ist die Rueckgabe eines
-                      get_updates-Aufrufs. Leer am Ende = Timeout.
-    budget_s:         Kurzes Zeitbudget fuer schnelle Tests (Default: 200ms).
-    long_poll_s:      long_poll-Parameter fuer get_updates (Default: 0 = Short-Poll im Mock).
+    backlog:          Rueckgabe des einmaligen Backlog-Peeks am Loop-Start (WR-02-Anker).
+                      Default None -> leerer Backlog (Normalfall, Anker bei offset=0).
+    updates_sequence: Liste von Listen — Rueckgaben der folgenden Long-Poll-Aufrufe.
+                      Leer/erschoepft = Timeout.
+    Gibt (m_approve, m_reject, m_get_updates, handled) zurueck.
     """
-    import re as _re
-    import importlib
-
-    # Frisch importieren (Mocks koennen Modul-State aendern)
+    import content_machine as cm
     import telegram_check as tc
-    import telegram_bot as tb
 
     m_approve  = MagicMock(return_value="Gemockter Titel")
     m_reject   = MagicMock()
@@ -156,12 +157,11 @@ def _run_loop_with_updates(updates_sequence, budget_s=0.2, long_poll_s=0):
     m_ans_cbq  = MagicMock()
     m_load_sec = MagicMock(return_value=OWN_CHAT_ID)
 
-    # get_updates als side_effect-Liste: jeder Aufruf gibt das naechste Element zurueck.
-    # Wenn die Sequenz erschoepft ist: immer [] (Timeout-Verhalten, kein StopIteration).
-    updates_iter = iter(updates_sequence)
+    # Erster get_updates-Aufruf = Backlog-Peek; danach die Sequenz; dann immer [].
+    poll_returns = iter([backlog or []] + list(updates_sequence))
     def _get_upd_side_effect(offset=0, long_poll=0):
         try:
-            return next(updates_iter)
+            return next(poll_returns)
         except StopIteration:
             return []
     m_get_updates = MagicMock(side_effect=_get_upd_side_effect)
@@ -173,28 +173,8 @@ def _run_loop_with_updates(updates_sequence, budget_s=0.2, long_poll_s=0):
          patch.object(tc, "send_message", m_send_msg), \
          patch.object(tc, "answer_callback_query", m_ans_cbq), \
          patch.object(tc, "_load_secret", m_load_sec), \
-         patch("telegram_bot.get_updates", m_get_updates), \
-         patch("telegram_bot._load_secret", m_load_sec):
-
-        # Loop-Logik direkt aus content_machine nachbauen (isoliert, ohne den ganzen Lauf)
-        # Das ist das gleiche Muster wie im Produktionscode.
-        own_chat_id = str(OWN_CHAT_ID)
-        offset = 0
-        deadline = time.monotonic() + budget_s
-        handled = False
-
-        while time.monotonic() < deadline:
-            updates = m_get_updates(offset=offset, long_poll=long_poll_s)
-            for upd in updates:
-                update_id = upd.get("update_id", 0)
-                result = tc.process_update(upd, own_chat_id)
-                offset = update_id + 1
-                if result == "handled":
-                    handled = True
-                    break
-            else:
-                continue
-            break
+         patch.object(cm, "get_updates", m_get_updates):
+        handled = cm.nachhoer_loop(str(OWN_CHAT_ID), budget_s=budget_s, long_poll_s=long_poll_s)
 
     return m_approve, m_reject, m_get_updates, handled
 
@@ -243,68 +223,49 @@ class TestNachhoerLoop(unittest.TestCase):
         self.assertFalse(handled, "Loop darf beim Timeout NICHT als 'handled' beendet sein")
 
     def test_keine_doppelverarbeitung(self):
-        """AUTO-03: Ein verarbeitetes Update wird genau einmal verarbeitet (Offset-Fortschreibung).
+        """AUTO-03: Ein verarbeitetes Update wird genau einmal verarbeitet.
 
-        Simulation: get_updates liefert bei Offset 0 ein Approve-Update, bei Offset 11
-        eine leere Liste (korrekte Offset-Fortschreibung). _do_approve wird genau einmal
-        aufgerufen — selbst wenn der Loop theoretisch weitere Iterationen machen wuerde.
-        """
+        Approve kommt im Fenster an; danach liefern weitere Polls nichts. _do_approve
+        muss trotz mehrerer moeglicher Iterationen genau einmal aufgerufen werden, und
+        der Loop terminiert sofort bei 'handled'."""
         approve_upd = _make_cq_update(10, OWN_CHAT_ID, OWN_CHAT_ID, f"approve:{SLUG}")
-
-        # side_effect-Funktion: prueft Offset und simuliert Single-Delivery
-        offsets_seen = []
-        def get_upd_side_effect(offset=0, long_poll=0):
-            offsets_seen.append(offset)
-            if offset == 0:
-                return [approve_upd]
-            return []  # Bei Offset 11 (= update_id + 1) kommt nichts mehr
-
-        import telegram_check as tc
-
-        m_approve  = MagicMock(return_value="Gemockter Titel")
-        m_reject   = MagicMock()
-        m_find     = MagicMock(return_value=DRAFT)
-        m_send_msg = MagicMock()
-        m_ans_cbq  = MagicMock()
-        m_load_sec = MagicMock(return_value=OWN_CHAT_ID)
-        m_get_upd  = MagicMock(side_effect=get_upd_side_effect)
-
-        with patch.object(tc, "_do_approve", m_approve), \
-             patch.object(tc, "_do_reject",  m_reject), \
-             patch.object(tc, "_find_draft_in_repo", m_find), \
-             patch.object(tc, "get_updates",  m_get_upd), \
-             patch.object(tc, "send_message", m_send_msg), \
-             patch.object(tc, "answer_callback_query", m_ans_cbq), \
-             patch.object(tc, "_load_secret", m_load_sec):
-
-            own_chat_id = str(OWN_CHAT_ID)
-            offset = 0
-            deadline = time.monotonic() + 0.5
-            handled = False
-
-            while time.monotonic() < deadline:
-                updates = m_get_upd(offset=offset, long_poll=0)
-                for upd in updates:
-                    update_id = upd.get("update_id", 0)
-                    result = tc.process_update(upd, own_chat_id)
-                    offset = update_id + 1  # Offset fortschreiben (Single-Delivery)
-                    if result == "handled":
-                        handled = True
-                        break
-                else:
-                    continue
-                break
-
-        # _do_approve darf genau einmal aufgerufen worden sein (keine Doppelverarbeitung)
+        m_approve, m_reject, m_get, handled = _run_loop_with_updates(
+            [[approve_upd], [], []], budget_s=0.5
+        )
         m_approve.assert_called_once()
         m_reject.assert_not_called()
         self.assertTrue(handled)
-        # Offset muss nach dem Approve auf update_id + 1 = 11 gesetzt worden sein
-        self.assertIn(0, offsets_seen, "Erster Aufruf mit Offset 0 erwartet")
-        # Bei korrekter Fortschreibung wird Offset 11 NICHT mehr an get_updates
-        # uebergeben (Loop bricht bei 'handled' ab) — aber der interne offset-Wert
-        # muss 11 sein. Wir pruefen, dass Offset 0 NUR einmal an get_updates gegangen ist.
-        self.assertEqual(offsets_seen.count(0), 1, "Offset 0 darf nur einmal verwendet werden")
+        # Long-Poll nach dem Approve muss Offset 11 (= update_id+1) verwenden — Single-Delivery.
+        poll_offsets = [c.kwargs.get("offset") for c in m_get.call_args_list]
+        self.assertIn(11, poll_offsets, "Offset muss nach Approve auf update_id+1 fortgeschrieben sein")
+
+    def test_wr02_stale_backlog_wird_nicht_verarbeitet(self):
+        """WR-02: Ein alter, unbestaetigter Klick im Backlog darf den NEUEN Post nicht
+        veroeffentlichen. Der Loop verankert sich hinter dem Backlog; nur Klicks, die
+        WAEHREND des Fensters eintreffen, zaehlen."""
+        stale = _make_cq_update(5, OWN_CHAT_ID, OWN_CHAT_ID, "approve:alter-post-slug")
+        m_approve, m_reject, m_get, handled = _run_loop_with_updates(
+            [], backlog=[stale], budget_s=0.1
+        )
+        m_approve.assert_not_called()
+        m_reject.assert_not_called()
+        self.assertFalse(handled, "Stale Backlog-Klick darf den neuen Post nicht ausloesen")
+        # Peek war offset=0; erster Long-Poll danach muss hinter dem Backlog (>=6) verankern.
+        poll_offsets = [c.kwargs.get("offset") for c in m_get.call_args_list]
+        self.assertEqual(poll_offsets[0], 0, "Erster Aufruf ist der Backlog-Peek (offset=0)")
+        self.assertGreaterEqual(poll_offsets[1], 6, "Loop muss hinter dem Backlog verankern")
+
+    def test_wr02_neuer_klick_nach_backlog_wird_verarbeitet(self):
+        """WR-02-Gegenprobe: Trotz vorhandenem Backlog wird ein FRISCHER Klick (neuere
+        update_id, waehrend des Fensters) korrekt verarbeitet."""
+        stale = _make_cq_update(5, OWN_CHAT_ID, OWN_CHAT_ID, "approve:alter-slug")
+        fresh = _make_cq_update(6, OWN_CHAT_ID, OWN_CHAT_ID, f"approve:{SLUG}")
+        m_approve, m_reject, _, handled = _run_loop_with_updates(
+            [[fresh]], backlog=[stale]
+        )
+        m_approve.assert_called_once()
+        m_reject.assert_not_called()
+        self.assertTrue(handled, "Frischer Klick im Fenster muss verarbeitet werden")
 
 
 if __name__ == "__main__":

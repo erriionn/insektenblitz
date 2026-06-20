@@ -24,6 +24,44 @@ from telegram_bot import send_draft_message, send_post_text, send_message, get_u
 from pending_state import write_pending
 from telegram_check import process_update
 
+# Phase 04.1: Nachhoer-Fenster — Konstanten auf Modulebene, damit nachhoer_loop()
+# sie als Defaults nutzen kann und Tests sie ueberschreiben koennen.
+NACHHOER_BUDGET_S = 7 * 60  # 7 Minuten Gesamtfenster
+LONG_POLL_S = 25            # Telegram haelt die Verbindung fuer 25s offen
+
+
+def nachhoer_loop(own_chat_id: str,
+                  budget_s: int = NACHHOER_BUDGET_S,
+                  long_poll_s: int = LONG_POLL_S) -> bool:
+    """Lauscht budget_s lang aktiv (Long-Poll) und verarbeitet einen Approve/Reject-Klick.
+
+    Kernregeln (AUTO-01..04):
+      - KEINE eigene Approve/Reject-Logik — ausschliesslich process_update() aus
+        telegram_check (eine Quelle der Wahrheit, T-04.1-01).
+      - Offset fortschreiben: Telegram liefert jeden Klick einmal; Fenster + Cron
+        verarbeiten denselben Klick NICHT doppelt (T-04.1-03).
+
+    WR-02 (Stale-Update-Schutz): Der Loop verankert sich am NEUESTEN bereits
+    vorhandenen Update, statt ab offset=0 zu lauschen. Sonst koennte ein alter,
+    unbestaetigter Klick aus einem frueheren Lauf (z.B. nach Netzfehler) den FRISCH
+    erzeugten Post unter falschem Slug veroeffentlichen. So werden nur Klicks
+    verarbeitet, die WAEHREND des Fensters eintreffen. Im Normalfall ist der Backlog
+    leer -> offset=0 -> identisches Verhalten.
+
+    Returns:
+        True  — Approve/Reject wurde verarbeitet (Loop terminal beendet).
+        False — Zeitbudget abgelaufen, kein Klick (post-approval-Cron uebernimmt).
+    """
+    backlog = get_updates(offset=0)  # Short-Poll-Peek, bestaetigt nichts
+    offset = max((u.get("update_id", 0) for u in backlog), default=-1) + 1
+    deadline = time.monotonic() + budget_s
+    while time.monotonic() < deadline:
+        for upd in get_updates(offset=offset, long_poll=long_poll_s):
+            offset = upd.get("update_id", 0) + 1  # Single-Delivery (T-04.1-03)
+            if process_update(upd, own_chat_id) == "handled":
+                return True
+    return False
+
 
 def _published_titles() -> list:
     """D-07: Liest die Titel bereits veroeffentlichter blog-*.html aus dem Repo.
@@ -150,30 +188,13 @@ def main() -> None:
         #   - Tolerant: ein Loop-Fehler darf den bereits gesendeten Vorschau-Lauf
         #     NICHT abbrechen (T-04.1-02).
         #   - Health-Ping (D-12) kommt erst nach dem Loop-Exit — immer als letzter Schritt.
+        #   - Loop-Logik + Stale-Update-Schutz (WR-02): siehe nachhoer_loop().
         # ---------------------------------------------------------------------------
-        NACHHOER_BUDGET_S = 7 * 60  # 7 Minuten Gesamtfenster
-        LONG_POLL_S = 25             # Telegram haelt Verbindung fuer 25s offen
-
         try:
             own_chat_id = str(_load_secret("TELEGRAM_CHAT_ID"))
-            offset = 0
-            deadline = time.monotonic() + NACHHOER_BUDGET_S
             print(f"\nNachhoer-Fenster gestartet ({NACHHOER_BUDGET_S // 60} Min) ...")
-
-            while time.monotonic() < deadline:
-                updates = get_updates(offset=offset, long_poll=LONG_POLL_S)
-                for upd in updates:
-                    update_id = upd.get("update_id", 0)
-                    result = process_update(upd, own_chat_id)
-                    offset = update_id + 1  # Single-Delivery: Offset fortschreiben (T-04.1-03)
-                    if result == "handled":
-                        print("  Nachhoer-Fenster: Approve/Reject erhalten — Loop beendet.")
-                        break
-                else:
-                    # Innere for-Schleife NICHT mit break beendet (kein "handled")
-                    continue
-                # Aeussere while-Schleife verlassen (Approve/Reject erhalten)
-                break
+            if nachhoer_loop(own_chat_id):
+                print("  Nachhoer-Fenster: Approve/Reject erhalten — Loop beendet.")
             else:
                 print("  Nachhoer-Fenster abgelaufen — post-approval-Cron uebernimmt spaete Klicks.")
 
